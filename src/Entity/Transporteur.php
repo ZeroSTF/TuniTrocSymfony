@@ -50,15 +50,7 @@ class Transporteur
      */
     private $photo;
 
-    /**
-     * @var \Echange
-     *
-     * @ORM\ManyToOne(targetEntity="Echange")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_echange", referencedColumnName="id")
-     * })
-     */
-    private $idEchange;
+    
 
     public function getId(): ?int
     {
@@ -113,17 +105,7 @@ class Transporteur
         return $this;
     }
 
-    public function getIdEchange(): ?Echange
-    {
-        return $this->idEchange;
-    }
-
-    public function setIdEchange(?Echange $idEchange): self
-    {
-        $this->idEchange = $idEchange;
-
-        return $this;
-    }
+   
 
 
 }
