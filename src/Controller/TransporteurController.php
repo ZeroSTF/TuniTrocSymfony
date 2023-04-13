@@ -44,7 +44,7 @@ class TransporteurController extends AbstractController
     #[Route('/update/{id}', name: 'update_transporteur')]
     public function update(Request $request, ManagerRegistry $doctrine, $id): Response
     {
-        $transporteur = $doctrine->getRepository(transporteur::class)->find($id);
+        $transporteur = $doctrine->getRepository(Transporteur::class)->find($id);
         $form = $this->createForm(TransporteurType::class, $transporteur);
         
                 $form->handleRequest($request);
