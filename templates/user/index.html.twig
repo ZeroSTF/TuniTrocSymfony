@@ -31,15 +31,15 @@
                 <td>{{ user.prenom }}</td>
                 <td>
                 {% if user.photo %}
-                    <img src="{{ asset('uploads/' ~ user.photo) }}" alt="user photo" width="50">
+                    <img src="{{ asset(user.photo) }}" alt="User photo">
                 {% else %}
                     No photo available
                 {% endif %}
-            </td>
+                </td>
                 <td>{{ user.numTel }}</td>
                 <td>{{ user.ville }}</td>
                 <td>{{ user.valeurFidelite }}</td>
-                <td>{{ user.role ? 'Yes' : 'No' }}</td>
+                <td>{{ user.role ? 'Admin' : 'Client' }}</td>
                 <td>{{ user.etat }}</td>
                 <td>
                     <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>

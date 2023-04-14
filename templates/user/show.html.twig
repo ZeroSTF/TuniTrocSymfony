@@ -27,7 +27,13 @@
             </tr>
             <tr>
                 <th>Photo</th>
-                <td>{{ user.photo }}</td>
+                <td>
+                {% if user.photo %}
+                    <img src="{{ asset(user.photo) }}" alt="User photo">
+                {% else %}
+                    No photo available
+                {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>NumTel</th>
@@ -43,7 +49,7 @@
             </tr>
             <tr>
                 <th>Role</th>
-                <td>{{ user.role ? 'Yes' : 'No' }}</td>
+                <td>{{ user.role ? 'Admin' : 'Client' }}</td>
             </tr>
             <tr>
                 <th>Etat</th>

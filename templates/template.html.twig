@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="{{ asset ('plugins/fontawesome-free/css/all.min.css')}}">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{{ asset ('plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset ('dist/css/adminlte.min.css')}}">
 </head>
@@ -219,11 +221,12 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="pages/layout/top-nav-sidebar.html" class="nav-link">
+                <a href="{{ path ('app_evenement_index')}}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Fidelite</p>
+                  <p>Evenement</p>
                 </a>
               </li>
+             
               <li class="nav-item">
                 <a href="{{ path ('app_produit_index')}}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
@@ -237,6 +240,14 @@
                 </a>
               </li>
               <li class="nav-item">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Transporteur</p>
+              </li>
+              <li class="nav-item">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Echange</p>
+              </li>
+              <li class="nav-item">
                 <a href="pages/layout/fixed-sidebar-custom.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Post</p>
@@ -248,28 +259,19 @@
                   <p>Commentaire</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="pages/layout/fixed-footer.html" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Echange</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="{{ path ('app_evenement_index')}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Evenement</p>
-                </a>
-              </li>
+              
+              
               <li class="nav-item">
                 <a href="pages/layout/fixed-footer.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Reclamation</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="pages/layout/fixed-footer.html" class="nav-link">
+              
+               <li class="nav-item">
+                <a href="pages/layout/top-nav-sidebar.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Transporteur</p>
+                  <p>Fidelite</p>
                 </a>
               </li>
             </ul>
