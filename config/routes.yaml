@@ -1,0 +1,46 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+# config/routes.yaml
+accueil:
+    path: /
+    controller: App\Controller\DefaultController::index
+
+
+# config/routes.yaml
+post:
+    path: /post
+    controller: App\Controller\PostController::index
+
+
+
+# config/routes.yaml
+commentaire:
+    path: /commentaire
+    controller: App\Controller\CommentaireController::index
+
+post_index:
+    path: /crudpost
+    controller: App\Controller\CRUDPostController::index
+
+
+# config/routes.yaml
+commentaire_index:
+    path: /crudcommentaire
+    controller: App\Controller\CRUDCommentaireController::index
+
+admin_home:
+    path: /admin
+    controller: App\Controller\AdminController::index
+
+app_panier_index:
+  path: /panier
+  controller: App\Controller\PanierController::index
+
+
+app_produit_index:
+  path: /produit
+  controller: App\Controller\ProduitController::index
+
+
