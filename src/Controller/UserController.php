@@ -121,12 +121,15 @@ class UserController extends AbstractController
 
             // Authenticate the user
             if ($user && $this->isPasswordValid($user, $password)) {
+                if($user->isRole()){
                 // Generate a new token for the user
                 //$user->setToken($this->generateToken());
                 //$entityManager->flush();
 
                 // Redirect to the user index page
                 return $this->redirectToRoute('app_user_index');
+            }
+            return $this->redirectToRoute('');
             }
 
             // If the user is not authenticated, display an error message
