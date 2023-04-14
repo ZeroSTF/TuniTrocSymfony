@@ -1,0 +1,49 @@
+{{ form_start(form) }}
+ <div class="mb-3">
+  {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'form-label'}}) }}
+  {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'pattern': '[A-Za-z ]+', 'oninput': 'showAlert(this, "nom-alert")'}}) }}
+  <div class="alert-danger mt-2" id="nom-alert" style="display:none;">Le nom ne peut contenir que des lettres et des espaces.</div>
+</div>
+<div class="mb-3">
+  {{ form_label(form.prenom, 'Prenom', {'label_attr': {'class': 'form-label'}}) }}
+  {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'pattern': '[A-Za-z ]+', 'oninput': 'showAlert(this, "prenom-alert")'}}) }}
+  <div class="alert-danger mt-2" id="prenom-alert" style="display:none;">Le prénom ne peut contenir que des lettres et des espaces.</div>
+</div>
+<div class="mb-3">
+  {{ form_label(form.photo, 'Photo', {'label_attr': {'class': 'form-label'}}) }}
+  {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+</div>
+<div class="mb-3">
+  {{ form_label(form.numTel, 'Numéro du téléphone', {'label_attr': {'class': 'form-label'}}) }}
+  {{ form_widget(form.numTel, {'attr': {'class': 'form-control', 'pattern': '[0-9]{8}', 'oninput': 'showAlert(this, "numTel-alert")'}}) }}
+  <div class="alert-danger mt-2" id="numTel-alert" style="display:none;">Le numéro de téléphone doit être composé de 8 chiffres.</div>
+</div>
+
+  <button type="submit" class="btn btn-primary">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
+
+<script>
+  function showAlert(inputField, alertId) {
+    let alertElement = document.getElementById(alertId);
+    let inputValue = inputField.value;
+    let isValid = inputField.checkValidity();
+    if (isValid) {
+      alertElement.style.display = 'none';
+      inputField.classList.add('is-valid');
+      inputField.classList.remove('is-invalid');
+    } else {
+      alertElement.style.display = 'block';
+      inputField.classList.add('is-invalid');
+      inputField.classList.remove('is-valid');
+    }
+  }
+
+  let numTelInput = document.querySelector('#transporteur_numTel');
+  numTelInput.addEventListener('keyup', function(event) {
+    let numTel = numTelInput.value;
+    let numTelPattern = /^[0-9]{8}$/;
+    let isValid = numTelPattern.test(numTel);
+    numTelInput.classList.toggle('is-invalid', !isValid);
+    numTelInput.classList.toggle('is-valid', isValid);
+  });
+</script>
