@@ -24,7 +24,7 @@ class LoginFormSuccessHandler implements AuthenticationSuccessHandlerInterface
     {
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             
-            return new RedirectResponse($this->router->generate('admin_dashboard'));
+            return new RedirectResponse($this->router->generate('app_user_index'));
         }
 
         // redirect to the default page for other users
