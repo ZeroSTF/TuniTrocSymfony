@@ -1,8 +1,15 @@
 {% extends 'templatefront.html.twig' %}
 
+
+
 {% block body %}
     <h1>Registration</h1>
-
+    {% for flash_message in app.flashes('success') %}
+    <div class="alert alert-success">{{ flash_message }}</div>
+{% endfor %}
+{% for flash_message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ flash_message }}</div>
+{% endfor %}
     <form method="post" action="{{ path('app_register') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label for="{{ registrationForm.email.vars.id }}">{{ registrationForm.email.vars.label }}</label>
