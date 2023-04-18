@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 use App\Form\LoginForm;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 
 #[Route('/user')]
@@ -101,61 +102,7 @@ class UserController extends AbstractController
         return $response;
     }
 
-    #[Route('/login', name: 'app_user_login', methods: ['GET', 'POST'])]
-    public function login(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $error='';
-        // Create a new instance of the login form
-        $form = $this->createForm(LoginForm::class);
 
-        // Handle form submission
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Get the email and password from the form
-            $email = $form->get('email')->getData();
-            $password = $form->get('password')->getData();
-
-            // Find the user by email
-            $userRepository = $entityManager->getRepository(User::class);
-            $user = $userRepository->findOneBy(['email' => $email]);
-
-            // Authenticate the user
-            if ($user && $this->isPasswordValid($user, $password)) {
-                if($user->isRole()){
-                // Generate a new token for the user
-                //$user->setToken($this->generateToken());
-                //$entityManager->flush();
-
-                // Redirect to the user index page
-                return $this->redirectToRoute('app_user_index');
-            }
-            return $this->redirectToRoute('');
-            }
-
-            // If the user is not authenticated, display an error message
-            $this->addFlash('error', 'Invalid email or password');
-            $error='Invalid email or password';
-        }
-
-        // Render the login form
-        return $this->render('user/login.html.twig', [
-            'form' => $form->createView(),
-            'error' => $error
-        ]);
-    }
-
-    private function generateToken(): string
-    {
-        return bin2hex(random_bytes(32));
-    }
-
-    private function isPasswordValid(User $user, string $password): bool
-    {
-        $encoder = new MessageDigestPasswordEncoder('sha512', true, 10);
-        $saltedPassword = $password . $user->getSalt();
-        $encodedPassword = $encoder->encodePassword($saltedPassword, null);
-        return $encodedPassword === $user->getPwd();
-    }
 
     private function encodePassword(User $user, string $plainPassword): string
     {
