@@ -1,26 +1,30 @@
 framework:
     messenger:
-        failure_transport: failed
+        enabled: false
 
-        transports:
+
+
+#framework:
+ #   messenger:
+ #       failure_transport: failed
+
+   #     transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
-            smtp: 'smtp://smtp.gmail.com:587?encryption=tls&auth_mode=login&username=tunitrocPI@gmail.com&password=vsnjsgiihqbeykpz'
+     #       async:
+       #         dsn: 'doctrine://default'
+      #          options:
+      #              use_notify: false # send messages immediately
+      #              check_delayed_interval: 60000
+      #          retry_strategy:
+     #               max_retries: 3
+     #               multiplier: 2
+#
+     #       failed: 'doctrine://default?queue_name=failed'
 
-            async:
-                dsn: 'doctrine://default'
-                options:
-                    use_notify: false # send messages immediately
-                    check_delayed_interval: 60000
-                retry_strategy:
-                    max_retries: 3
-                    multiplier: 2
-
-            failed: 'doctrine://default?queue_name=failed'
-
-        routing:
-            Symfony\Component\Mailer\Messenger\SendEmailMessage: async
-            Symfony\Component\Notifier\Message\ChatMessage: async
-            Symfony\Component\Notifier\Message\SmsMessage: async
+    #    routing:
+    #        Symfony\Component\Mailer\Messenger\SendEmailMessage: async
+   #         Symfony\Component\Notifier\Message\ChatMessage: async
+    #        Symfony\Component\Notifier\Message\SmsMessage: async
 
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
