@@ -4,16 +4,18 @@ framework:
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
+            smtp: 'smtp://smtp.gmail.com:587?encryption=tls&auth_mode=login&username=tunitrocPI@gmail.com&password=vsnjsgiihqbeykpz'
+
             async:
-                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                dsn: 'doctrine://default'
                 options:
-                    use_notify: true
+                    use_notify: false # send messages immediately
                     check_delayed_interval: 60000
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2
+
             failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
 
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: async

@@ -20,11 +20,9 @@ use Symfony\Component\Mailer\MailerInterface;
 class RegistrationController extends AbstractController
 {
     private $emailVerifier ;
-    private $mailer;
-    public function __construct(EmailVerifier $emailVerifier, MailerInterface $mailer)
+    public function __construct(EmailVerifier $emailVerifier)
     {
         $this->emailVerifier = $emailVerifier;
-        $this->mailer = $mailer;
     }
 
     #[Route('/register', name: 'app_register')]
