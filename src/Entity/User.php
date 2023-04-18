@@ -110,7 +110,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $etat;
 
     #[ORM\Column(type: 'json')]
-    private $roles = ['Admin','Client'];
+    private $roles = [];
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
@@ -225,6 +225,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->role = $role;
 
+        if($role==true){
+            $this->roles='ROLE_ADMIN';
+        }
+        else{
+            $this->roles='ROLE_USER';
+        }
+
         return $this;
     }
 
@@ -294,6 +301,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+        if ($roles=='ROLE_USER'){
+            $this->role=false;
+        }
+        else{
+            $this->role=true;
+        }
 
         return $this;
     }
