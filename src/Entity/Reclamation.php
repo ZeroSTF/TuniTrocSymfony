@@ -57,6 +57,26 @@ class Reclamation
      */
     private $idUsers;
 
+    /**
+ * @var string|null
+ *
+ * @ORM\Column(name="photo", type="string", length=255, nullable=true)
+ */
+private $photo;
+
+
+public function getPhoto(): ?string
+{
+    return $this->photo;
+}
+
+public function setPhoto(?string $photo): self
+{
+    $this->photo = $photo;
+
+    return $this;
+}
+
     public function getId(): ?int
     {
         return $this->id;

@@ -81,4 +81,26 @@ class ReclamationController extends AbstractController
 
         return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     * @Route("/reclamation/statistics", name="app_reclamation_statistics")
+     */
+    public function statistics(EntityManagerInterface $entityManager): Response
+    {
+        // Récupérez le repository de l'entité Reclamation
+        $reclamationRepository = $entityManager->getRepository(Reclamation::class);
+
+        // Comptez le nombre de réclamations en cours
+        $reclamationsEnCours = $reclamationRepository->count(['etat' => true]);
+
+        // Comptez le nombre de réclamations traitées
+        $reclamationsTraitees = $reclamationRepository->count(['etat' => false]);
+
+        // Passez les valeurs des statistiques à la vue
+        return $this->render('reclamation/statistics.html.twig', [
+            'reclamations_en_cours' => $reclamationsEnCours,
+            'reclamations_traitees' => $reclamationsTraitees,
+        ]);
+    }
+
 }
