@@ -31,7 +31,7 @@
                 <td>{{ user.prenom }}</td>
                 <td>
                         {% if user.photo %}
-                            <img src="{{ asset(user.photo) }}" alt=" photo" width="100">
+                            <img src="{{ asset('uploads/users/' ~ app.user.photo) }}" alt=" photo" width="100">
                         {% else %}
                             No photo
                         {% endif %}

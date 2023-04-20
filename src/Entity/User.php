@@ -106,15 +106,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @ORM\Column(name="etat", type="string", length=255, nullable=false)
      */
-    private $etat;
+    private string $etat;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
-
-    private $PhotoUrl;
+    private bool $isVerified = false;
 
     public function getId(): ?int
     {
@@ -169,25 +167,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function setPhoto(?File $photo = null): self
-    {
-        if ($photo) {
-            $this->photo = $photo->getPathname();
-        } else {
-            $this->photo = null;
-        }
-
-        return $this;
-    }
-
-    public function getPhoto(): ?File
-    {
-        if ($this->photo && file_exists($this->photo)) {
-            return new File($this->photo);
-        }
-
-        return null;
-    }
 
     public function getNumTel(): ?int
     {
@@ -360,6 +339,22 @@ private function isAdmin(): bool
         $this->isVerified = $isVerified;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param mixed $photo
+     */
+    public function setPhoto($photo): void
+    {
+        $this->photo = $photo;
     }
 
 }

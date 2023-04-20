@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Test\Controller;
+namespace App\Tests\Controller;
 
 use App\Entity\Evenement;
 use Doctrine\ORM\EntityManagerInterface;

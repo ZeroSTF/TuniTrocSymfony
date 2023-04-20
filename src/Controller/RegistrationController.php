@@ -8,6 +8,7 @@ use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
@@ -39,14 +40,25 @@ class RegistrationController extends AbstractController
                     $form->get('pwd')->getData()
                 )
             );
-            $photo = $form['photo']->getData();
-            if ($photo) {
-                $user->setPhoto($photo);
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $photoFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $photoFilename
+                    );
+                } catch (FileException $e) {
+                    // handle exception if something happens during file upload
+                }
+
+                $user->setPhoto($photoFilename);
             }
             $user->setValeurFidelite(0);
             $user->setRole(false);
             $user->setSalt("");
-            $user->setEtat("INACTIF");
+            $user->setEtat("PENDING");
             $entityManager->persist($user);
             $entityManager->flush();
             

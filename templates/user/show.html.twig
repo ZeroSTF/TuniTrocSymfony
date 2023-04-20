@@ -28,11 +28,11 @@
             <tr>
                 <th>Photo</th>
                 <td>
-                {% if user.photo %}
-                    <img src="{{ asset(user.photo) }}" alt="User photo">
-                {% else %}
-                    No photo available
-                {% endif %}
+                    {% if user.photo %}
+                        <img src="{{ asset('uploads/users/' ~ app.user.photo) }}" alt=" photo" width="100">
+                    {% else %}
+                        No photo
+                    {% endif %}
                 </td>
             </tr>
             <tr>

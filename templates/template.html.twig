@@ -175,14 +175,10 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          {% if app.user.photo %}
-    <img src="{{ asset(app.user.photo)|raw }}" alt="User Photo">
-{% else %}
-    <img src="{{ asset('images/default-user-photo.png') }}" alt="Default User Photo">
-{% endif %}
+    <img src="{{ asset('uploads/users/' ~ app.user.photo) }}" class="img-circle elevation-2" alt="User Photo">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Khaireddine bouzazi</a>
+          <a href="#" class="d-block">{{  app.user.prenom()~" "~app.user.nom() }}</a>
         </div>
       </div>
 
