@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * User
@@ -53,12 +54,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $prenom;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="photo", type="string", length=255, nullable=false)
+     /**
+     * @ORM\Column(name="photo", type="string", length=255, nullable=true)
      */
-    private $photo;
+     private $photo;
 
     /**
      * @var int
@@ -115,6 +114,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    private $PhotoUrl;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -168,16 +169,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhoto(): ?string
+    public function setPhoto(?File $photo = null): self
     {
-        return $this->photo;
-    }
-
-    public function setPhoto(string $photo): self
-    {
-        $this->photo = $photo;
+        if ($photo) {
+            $this->photo = $photo->getPathname();
+        } else {
+            $this->photo = null;
+        }
 
         return $this;
+    }
+
+    public function getPhoto(): ?File
+    {
+        if ($this->photo && file_exists($this->photo)) {
+            return new File($this->photo);
+        }
+
+        return null;
     }
 
     public function getNumTel(): ?int
@@ -352,4 +361,5 @@ private function isAdmin(): bool
 
         return $this;
     }
+
 }

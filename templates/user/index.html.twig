@@ -30,11 +30,11 @@
                 <td>{{ user.nom }}</td>
                 <td>{{ user.prenom }}</td>
                 <td>
-                {% if user.photo %}
-                    <img src="{{ asset(user.photo) }}" alt="User photo">
-                {% else %}
-                    No photo available
-                {% endif %}
+                        {% if user.photo %}
+                            <img src="{{ asset(user.photo) }}" alt=" photo" width="100">
+                        {% else %}
+                            No photo
+                        {% endif %}
                 </td>
                 <td>{{ user.numTel }}</td>
                 <td>{{ user.ville }}</td>

@@ -40,13 +40,17 @@ class RegistrationController extends AbstractController
                     $form->get('pwd')->getData()
                 )
             );
+            $photo = $form['photo']->getData();
+            if ($photo) {
+                $user->setPhoto($photo);
+            }
             $user->setValeurFidelite(0);
             $user->setRole(false);
             $user->setSalt("");
             $user->setEtat("INACTIF");
             $entityManager->persist($user);
             $entityManager->flush();
-
+            
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())

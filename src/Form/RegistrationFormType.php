@@ -125,7 +125,7 @@ class RegistrationFormType extends AbstractType
             ->add('photo', FileType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Photo (JPG or PNG file)',
-                'mapped' => true,
+                'mapped' => false,
                 'required' => true,
                 'constraints' => [
                     new File([
@@ -137,7 +137,10 @@ class RegistrationFormType extends AbstractType
                         'mimeTypesMessage' => 'Please upload a valid JPG or PNG image',
                     ])
                 ],
+                'data_class' => null, // add this line to handle the new photo field type
             ])
+            
+            
         ->add('pwd', PasswordType::class, [
             'attr' => ['class' => 'form-control'],
             'label' => 'Password',
