@@ -15,11 +15,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
 
 class RegistrationController extends AbstractController
 {
-    private $emailVerifier ;
+    private EmailVerifier $emailVerifier ;
     public function __construct(EmailVerifier $emailVerifier)
     {
         $this->emailVerifier = $emailVerifier;
@@ -105,7 +104,7 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/instruction', name: 'app_instruction')]
-    public function instruction()
+    public function instruction(): Response
     {
         return $this->render('registration/instruction.html.twig');
     }
