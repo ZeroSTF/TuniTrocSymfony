@@ -1,58 +1,84 @@
 {% extends 'template.html.twig' %}
 
-
 {% block body %}
-    <h1>User index</h1>
+    <!-- Breadcrumb -->
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Liste des Utilisateurs</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">User index</li>
+                </ol>
+            </div>
+        </div>
+    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Pwd</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Photo</th>
-                <th>NumTel</th>
-                <th>Ville</th>
-                <th>ValeurFidelite</th>
-                <th>Role</th>
-                <th>Etat</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.pwd }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>
-                        {% if user.photo %}
-                            <img src="{{ asset('uploads/users/' ~ app.user.photo) }}" alt=" photo" width="100">
-                        {% else %}
-                            No photo
-                        {% endif %}
-                </td>
-                <td>{{ user.numTel }}</td>
-                <td>{{ user.ville }}</td>
-                <td>{{ user.valeurFidelite }}</td>
-                <td>{{ user.role ? 'Admin' : 'Client' }}</td>
-                <td>{{ user.etat }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.getId()}) }}">show</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="14">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Mot de Passe</th>
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Photo</th>
+                                        <th>Numéro de téléphone</th>
+                                        <th>Ville</th>
+                                        <th>Valeur de fidélité</th>
+                                        <th>Rôle</th>
+                                        <th>État</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.id }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.pwd }}</td>
+                                            <td>{{ user.nom }}</td>
+                                            <td>{{ user.prenom }}</td>
+                                            <td>
+                                                {% if user.photo %}
+                                                    <img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="photo" width="100">
+                                                {% else %}
+                                                    No photo
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ user.numTel }}</td>
+                                            <td>{{ user.ville }}</td>
+                                            <td>{{ user.valeurFidelite }}</td>
+                                            <td>{{ user.role ? 'Admin' : 'Client' }}</td>
+                                            <td>{{ user.etat }}</td>
+                                            <td>
+                                                <a href="{{ path('app_user_show', {'id': user.getId()}) }}" class="btn btn-info btn-sm"><i class="far fa-eye"></i> Afficher</a>
+                                                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary btn-sm"><i class="far fa-edit"></i> Modifier</a>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="12">Aucun enregistrement trouvé</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <a href="{{ path('app_user_new') }}" class="btn btn-primary">Ajouter un nouvel utilisateur</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <a href="{{ path('app_user_new') }}">Create new</a>
 {% endblock %}

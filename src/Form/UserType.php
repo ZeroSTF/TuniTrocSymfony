@@ -89,37 +89,7 @@ class UserType extends AbstractType
                     'Tunis' => 'Tunis',
                     'Zaghouan' => 'Zaghouan',
                 ],
-                'constraints' => [
-                    new Choice([
-                        'choices' => [
-                            'Ariana',
-                            'Beja',
-                            'Ben Arous',
-                            'Bizerte',
-                            'Gabes',
-                            'Gafsa',
-                            'Jendouba',
-                            'Kairouan',
-                            'Kasserine',
-                            'Kebili',
-                            'Kef',
-                            'Mahdia',
-                            'Manouba',
-                            'Medenine',
-                            'Monastir',
-                            'Nabeul',
-                            'Sfax',
-                            'Sidi Bouzid',
-                            'Siliana',
-                            'Sousse',
-                            'Tataouine',
-                            'Tozeur',
-                            'Tunis',
-                            'Zaghouan',
-                        ],
-                        'message' => 'Please choose a valid city',
-                    ]),
-                ],
+
             ])
             ->add('photo', FileType::class, [
                 'attr' => ['class' => 'form-control'],
