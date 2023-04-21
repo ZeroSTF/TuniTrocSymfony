@@ -60,9 +60,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      private $photo;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="num_tel", type="integer", nullable=false)
+     * @ORM\Column(name="num_tel", type="string", nullable=false)
      */
     private $numTel;
 
@@ -168,12 +168,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getNumTel(): ?int
+    public function getNumTel(): ?string
     {
         return $this->numTel;
     }
 
-    public function setNumTel(int $numTel): self
+    public function setNumTel(string $numTel): self
     {
         $this->numTel = $numTel;
 

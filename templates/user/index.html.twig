@@ -9,8 +9,8 @@
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">User index</li>
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Liste des Utilisateurs</li>
                 </ol>
             </div>
         </div>
@@ -28,13 +28,12 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Email</th>
-                                        <th>Mot de Passe</th>
                                         <th>Nom</th>
                                         <th>Prénom</th>
                                         <th>Photo</th>
-                                        <th>Numéro de téléphone</th>
+                                        <th style="white-space: nowrap;">Numéro de téléphone</th>
                                         <th>Ville</th>
-                                        <th>Valeur de fidélité</th>
+                                        <th style="white-space: nowrap;">Valeur de fidélité</th>
                                         <th>Rôle</th>
                                         <th>État</th>
                                         <th>Actions</th>
@@ -45,7 +44,6 @@
                                         <tr>
                                             <td>{{ user.id }}</td>
                                             <td>{{ user.email }}</td>
-                                            <td>{{ user.pwd }}</td>
                                             <td>{{ user.nom }}</td>
                                             <td>{{ user.prenom }}</td>
                                             <td>
