@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/user')]
 class UserController extends AbstractController
 {
-    
+
 
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
@@ -38,9 +38,10 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $photoFile = $form->get('photo')->getData();
             if ($photoFile) {
-                $photoFilename = uniqid().'.'.$photoFile->guessExtension();
+                $photoFilename = uniqid() . '.' . $photoFile->guessExtension();
 
                 try {
                     $photoFile->move(
@@ -52,6 +53,16 @@ class UserController extends AbstractController
                 }
 
                 $user->setPhoto($photoFilename);
+            } else {
+                $user->setPhoto("");
+            }
+            // get the value of the "valeurFidelite" field
+            $valeurFidelite = $form->get('valeurFidelite')->getData();
+
+// check if the value is not set or is empty
+            if (!isset($valeurFidelite) || empty($valeurFidelite)) {
+                // if it's not set, set it to 0
+                $user->setValeurFidelite(0);
             }
             $user->setSalt("");
             $user->setPwd(
@@ -88,13 +99,14 @@ class UserController extends AbstractController
     public function edit(Request $request, int $id, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         $user = $entityManager->getRepository(User::class)->find($id);
+        $oldPhotoFilename = $user->getPhoto();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $photoFile = $form->get('photo')->getData();
             if ($photoFile) {
-                $photoFilename = uniqid().'.'.$photoFile->guessExtension();
+                $photoFilename = uniqid() . '.' . $photoFile->guessExtension();
 
                 try {
                     $photoFile->move(
@@ -106,6 +118,16 @@ class UserController extends AbstractController
                 }
 
                 $user->setPhoto($photoFilename);
+            } else {
+                $user->setPhoto($oldPhotoFilename);
+            }
+            // get the value of the "valeurFidelite" field
+            $valeurFidelite = $form->get('valeurFidelite')->getData();
+
+// check if the value is not set or is empty
+            if (!isset($valeurFidelite) || empty($valeurFidelite)) {
+                // if it's not set, set it to 0
+                $user->setValeurFidelite(0);
             }
             $user->setSalt("");
             $user->setPwd(
@@ -126,22 +148,19 @@ class UserController extends AbstractController
     }
 
 
-
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $user = $entityManager
             ->getRepository(User::class)
             ->find($id);
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $entityManager->remove($user);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
-
-
 
 
 }

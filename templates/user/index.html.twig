@@ -48,7 +48,8 @@
                                             <td>{{ user.prenom }}</td>
                                             <td>
                                                 {% if user.photo %}
-                                                    <img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="photo" width="100">
+                                                    <img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="photo"
+                                                         width="100">
                                                 {% else %}
                                                     No photo
                                                 {% endif %}
@@ -59,8 +60,11 @@
                                             <td>{{ user.role ? 'Admin' : 'Client' }}</td>
                                             <td>{{ user.etat }}</td>
                                             <td>
-                                                <a href="{{ path('app_user_show', {'id': user.getId()}) }}" class="btn btn-info btn-sm"><i class="far fa-eye"></i> Afficher</a>
-                                                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary btn-sm"><i class="far fa-edit"></i> Modifier</a>
+                                                <a href="{{ path('app_user_show', {'id': user.getId()}) }}"
+                                                   class="btn btn-info btn-sm"><i class="far fa-eye"></i> Afficher</a>
+                                                <a href="{{ path('app_user_edit', {'id': user.id}) }}"
+                                                   class="btn btn-primary btn-sm"><i class="far fa-edit"></i>
+                                                    Modifier</a>
                                             </td>
                                         </tr>
                                     {% else %}
@@ -71,7 +75,8 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <a href="{{ path('app_user_new') }}" class="btn btn-primary">Ajouter un nouvel utilisateur</a>
+                            <a href="{{ path('app_user_new') }}" class="btn btn-primary">Ajouter un nouvel
+                                utilisateur</a>
                         </div>
                     </div>
                 </div>

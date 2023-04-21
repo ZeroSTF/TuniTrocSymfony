@@ -3,7 +3,6 @@
 namespace App\Form;
 
 
-
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
@@ -31,37 +30,67 @@ class UserType extends AbstractType
 
         $builder
             ->add('email', EmailType::class, [
-                'attr' => ['class' => 'form-control'],
+                'required' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer une adresse email',
+                    ]),
+                    new Email([
+                        'mode' => 'strict',
+                        'message' => 'L\'adresse email "{{ value }}" n\'est pas valide',
+                    ]),
+                ],
                 'label' => 'Email'
             ])
             ->add('nom', TextType::class, [
-                'attr' => ['class' => 'form-control'],
+                'required' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un nom',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'max' => 255,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le nom doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                ],
                 'label' => 'Nom'
             ])
             ->add('prenom', TextType::class, [
-                'attr' => ['class' => 'form-control'],
+                'required' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un prénom',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'max' => 255,
+                        'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le prénom doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                ],
                 'label' => 'Prenom'
             ])
             ->add('numTel', TextType::class, [
-                'attr' => ['class' => 'form-control'],
+                'required' => false,
                 'label' => 'Numero de Telephone',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter your phone number',
+                        'message' => 'Veuillez saisir le numéro de téléphone.',
                     ]),
                     new Length([
                         'min' => 8,
                         'max' => 8,
-                        'exactMessage' => 'Your phone number should be exactly {{ limit }} numbers',
+                        'exactMessage' => 'Le numéro de téléphone doit comporter exactement {{ limit }} chiffres.',
                     ]),
                     new Regex([
                         'pattern' => '/^\d+$/',
-                        'message' => 'Your phone number should only contain numbers',
+                        'message' => 'Le numéro de téléphone doit contenir uniquement des chiffres.',
                     ]),
                 ],
             ])
             ->add('ville', ChoiceType::class, [
-                'attr' => ['class' => 'form-control'],
                 'label' => 'Ville',
                 'choices' => [
                     'Ariana' => 'Ariana',
@@ -92,10 +121,10 @@ class UserType extends AbstractType
 
             ])
             ->add('photo', FileType::class, [
-                'attr' => ['class' => 'form-control'],
-                'label' => 'Photo (JPG or PNG file)',
+
+                'label' => 'Photo (fichier JPG ou PNG)',
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
@@ -103,25 +132,24 @@ class UserType extends AbstractType
                             'image/jpeg',
                             'image/png',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid JPG or PNG image',
+                        'mimeTypesMessage' => 'Veuillez télécharger une image JPG ou PNG valide.',
                     ])
                 ],
                 'data_class' => null, // add this line to handle the new photo field type
+
             ])
-
-
             ->add('pwd', PasswordType::class, [
-                'attr' => ['class' => 'form-control'],
-                'label' => 'Password',
+                'required' => false,
+                'label' => 'Mot de Passe',
 
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Veuillez saisir un mot de passe.',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Le mot de passe doit comporter au moins {{ limit }} caractères.',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ])
@@ -129,25 +157,21 @@ class UserType extends AbstractType
                 ],
             ])
             ->add('confirm_password', PasswordType::class, [
-                'attr' => ['class' => 'form-control'],
-                'label' => 'Confirm Password',
-                'help' => 'Your password must be at least 6 characters long.',
+                'required' => false,
+                'label' => 'Confirmer le mot de passe',
+                'help' => 'Votre mot de passe doit comporter au moins 6 caractères.',
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please confirm your password',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
+                        'message' => 'Veuillez confirmer le mot de passe.',
                     ]),
                     new Callback([
                         'callback' => function ($value, ExecutionContextInterface $context) use ($builder) {
                             $password = $builder->getData()->getPwd();
+                            dump($password);
+                            dump($value);
                             if ($password !== null && $password !== $value) {
-                                $context->buildViolation('Your passwords do not match')->addViolation();
+                                $context->buildViolation('Les mot de passes ne sont pas identiques.')->addViolation();
                             }
                         },
                         'payload' => ['builder' => $builder],
@@ -155,37 +179,33 @@ class UserType extends AbstractType
 
                 ],
             ])
-        ->add('valeurFidelite', TextType::class, [
-            'label' => 'Valeur Fidelité',
-            'attr' => ['class' => 'form-control'],
-            'constraints' => [
-                new NotBlank(),
-                new Length([
-                    'min' => 0,
-                    'max' => 10000,
-                ]),
-            ],
-        ])
-        ->add('role', ChoiceType::class, [
-            'attr' => ['class' => 'form-control'],
-            'choices' => [
-                'Admin' => true,
-                'Client' => false
-            ],
-            'expanded' => true
-        ])
-        ->add('etat', ChoiceType::class, [
-            'attr' => ['class' => 'form-control'],
-            'choices' => [
-                'ACTIVE' => 'ACTIVE',
-                'INACTIVE' => 'INACTIVE',
-                'BLOCKED' => 'BLOCKED',
-                'PENDING' => 'PENDING',
-                'DELETED' => 'DELETED'
-            ]
-        ])
-    ;
-}
+            ->add('valeurFidelite', TextType::class, [
+                'required' => false,
+                'label' => 'Valeur Fidelité',
+                'constraints' => [
+                    new Length([
+                        'min' => 0,
+                        'max' => 10000,
+                    ]),
+                ],
+            ])
+            ->add('role', ChoiceType::class, [
+                'choices' => [
+                    'Admin' => true,
+                    'Client' => false
+                ],
+
+            ])
+            ->add('etat', ChoiceType::class, [
+                'choices' => [
+                    'ACTIVE' => 'ACTIVE',
+                    'INACTIVE' => 'INACTIVE',
+                    'BLOCKED' => 'BLOCKED',
+                    'PENDING' => 'PENDING',
+                    'DELETED' => 'DELETED'
+                ]
+            ]);
+    }
 
 
     public function configureOptions(OptionsResolver $resolver): void

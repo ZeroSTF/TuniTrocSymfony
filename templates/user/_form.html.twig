@@ -1,4 +1,92 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-<button type="submit" style="margin-top: 10px;" class="btn btn-primary">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+ {{ form_start(form) }}
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="far fa-envelope"></i></span>
+                </div>
+                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                </div>
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                </div>
+                {{ form_widget(form.numTel, {'attr': {'class': 'form-control', 'placeholder': 'Numéro de téléphone'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-city"></i></span>
+                </div>
+                {{ form_widget(form.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="custom-file">
+                {{ form_widget(form.photo, {'attr': {'class': 'custom-file-input', 'id': 'customFile'}}) }}
+                <label class="custom-file-label" for="customFile"><i class="fas fa-upload"></i> Choisir une photo...</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                </div>
+                {{ form_widget(form.pwd, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                </div>
+                {{ form_widget(form.confirm_password, {'attr': {'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'}}) }}
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-star"></i></span>
+            </div>
+            {{ form_widget(form.valeurFidelite, {'attr': {'class': 'form-control', 'placeholder': 'Valeur de fidélité'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-user-shield"></i></span>
+            </div>
+            {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+            </div>
+            {{ form_widget(form.etat, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ button_label|default('Enregistrer') }}</button>
+        {{ form_end(form) }}
+

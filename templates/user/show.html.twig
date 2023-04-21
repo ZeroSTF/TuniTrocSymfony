@@ -58,9 +58,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_user_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary mt-3"><i class="fas fa-arrow-left"></i>
+        Retour à la liste</a>
 
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-primary mt-3">Modifier l'utilisateur</a>
+    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-outline-primary mt-3"><i
+                class="fas fa-edit"></i> Modifier l'utilisateur</a>
+
 
     {{ include('user/_delete_form.html.twig') }}
 

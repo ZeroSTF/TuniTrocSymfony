@@ -1,6 +1,6 @@
 <form id="delete-form-{{ user.id }}" method="post" action="{{ path('app_user_delete', {'id': user.id}) }}">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-    <button class="btn btn-danger" style="margin-top: 16px;" onclick="confirmDelete(event, {{ user.id }})">Supprimer</button>
+    <button class="btn btn-outline-danger mt-3" style="margin-top: 16px;" onclick="confirmDelete(event, {{ user.id }})"><i class="fas fa-trash-alt"></i>Supprimer</button>
 </form>
 
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
