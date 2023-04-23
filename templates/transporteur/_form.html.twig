@@ -15,8 +15,8 @@
 </div>
 <div class="mb-3">
   {{ form_label(form.numTel, 'Numéro du téléphone', {'label_attr': {'class': 'form-label'}}) }}
-  {{ form_widget(form.numTel, {'attr': {'class': 'form-control', 'pattern': '[0-9]{8}', 'oninput': 'showAlert(this, "numTel-alert")'}}) }}
-  <div class="alert-danger mt-2" id="numTel-alert" style="display:none;">Le numéro de téléphone doit être composé de 8 chiffres.</div>
+{{ form_widget(form.numTel, {'attr': {'class': 'form-control', 'pattern': '^\+?[0-9]{0,11}$', 'oninput': 'showAlert(this, "numTel-alert")'}}) }}
+  <div class="alert-danger mt-2" id="numTel-alert" style="display:none;">Le numéro de téléphone doit être composé de 12 chiffres.</div>
 </div>
 
   <button type="submit" class="btn btn-primary">{{ button_label|default('Save') }}</button>
@@ -41,7 +41,7 @@
   let numTelInput = document.querySelector('#transporteur_numTel');
   numTelInput.addEventListener('keyup', function(event) {
     let numTel = numTelInput.value;
-    let numTelPattern = /^[0-9]{8}$/;
+let numTelPattern = /^\+?[0-9]{11}$/;
     let isValid = numTelPattern.test(numTel);
     numTelInput.classList.toggle('is-invalid', !isValid);
     numTelInput.classList.toggle('is-valid', isValid);

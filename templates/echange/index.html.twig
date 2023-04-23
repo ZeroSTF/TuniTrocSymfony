@@ -28,7 +28,13 @@
                 <td></td>
 
                 <td>{{ echange.location }}</td>
-<td>{{ echange.getIdTransporteur().nom ~ ' ' ~ echange.getIdTransporteur().prenom }}</td>
+<td>
+  {% if echange.idTransporteur %}
+    {{ echange.getIdTransporteur().nom ~ ' ' ~ echange.getIdTransporteur().prenom }}
+  {% else %}
+    Aucun transporteur assigné
+  {% endif %}
+</td>
 <td>
   {% if echange.etat == 'En cours de livraison' %}
     <span class="text-warning"><i class="fas fa-hourglass-half"></i> En cours de livraison</span>
