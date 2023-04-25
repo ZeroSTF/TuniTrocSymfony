@@ -46,16 +46,23 @@ class EvenementController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_evenement_show', methods: ['GET'])]
-    public function show(Evenement $evenement): Response
+    public function show(int $id, EntityManagerInterface $entityManager): Response
     {
+        $evenement = $entityManager
+            ->getRepository(Evenement::class)
+            ->find($id);
+
         return $this->render('evenement/show.html.twig', [
             'evenement' => $evenement,
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_evenement_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Evenement $evenement, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
+        $evenement = $entityManager
+            ->getRepository(Evenement::class)
+            ->find($id);
         $form = $this->createForm(EvenementType::class, $evenement);
         $form->handleRequest($request);
 
@@ -71,10 +78,13 @@ class EvenementController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_evenement_delete', methods: ['POST'])]
-    public function delete(Request $request, Evenement $evenement, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/delete', name: 'app_evenement_delete', methods: ['POST'])]
+    public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$evenement->getId(), $request->request->get('_token'))) {
+        $evenement = $entityManager
+            ->getRepository(Evenement::class)
+            ->find($id);
+        if ($this->isCsrfTokenValid('delete' . $evenement->getId(), $request->request->get('_token'))) {
             $entityManager->remove($evenement);
             $entityManager->flush();
         }

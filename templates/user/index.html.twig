@@ -66,11 +66,11 @@
                                             <td>{{ user.etat }}</td>
                                             <td class="project-actions text-right" style="white-space: nowrap;">
                                                 <a href="{{ path('app_user_show', {'id': user.getId()}) }}"
-                                                   class="btn btn-primary mt-3"><i class="far fa-folder"></i>
-                                                    Voir</a>
+                                                   class="btn btn-sm btn-primary"><i
+                                                            class="fas fa-eye"></i> Voir</a>
                                                 <a href="{{ path('app_user_edit', {'id': user.id}) }}"
-                                                   class="btn btn-info mt-3"><i class="far fa-edit"></i>
-                                                    Modifier</a>
+                                                   class="btn btn-sm btn-warning"><i
+                                                            class="fas fa-edit"></i> Modifier</a>
                                                 {{ include('user/_delete_form.html.twig') }}
                                             </td>
                                         </tr>
@@ -82,13 +82,14 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <a href="{{ path('app_user_new') }}" class="nav-link btn btn-primary">
-                                <i class="nav-icon fas fa-user-plus"></i>
-                                <p>Ajouter un nouvel
-                                    utilisateur</p>
+                            <a href="{{ path('app_user_new') }}" class="nav-link btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                Créer un nouvel
+                                utilisateur</a>
                             </a>
                             <a href="{{ path('app_user_statistics') }}" class="nav-link btn btn-default">
-                                <i class="nav-icon fas fa-chart-pie"></i>
+                                <i
+                                        class="nav-icon fas fa-chart-pie"></i>
                                 <p>Statistiques</p>
                             </a>
                         </div>

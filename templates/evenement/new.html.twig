@@ -1,9 +1,15 @@
 {% extends 'template.html.twig' %}
 
 {% block body %}
-    <h1>Create new Evenement</h1>
-
-    {{ include('evenement/_form.html.twig') }}
-
-    <a href="{{ path('app_evenement_index') }}">back to list</a>
+    <div class="card col-md-12">
+        <div class="card-header">
+            <h3 class="card-title">Ajouter un nouvel événement</h3>
+        </div>
+        <div class="card-body">
+            {{ include('evenement/_form.html.twig', {'button_label': 'Ajouter'}) }}
+        </div>
+        <div class="card-footer">
+            <a href="{{ path('app_evenement_index') }}" class="btn btn-default">Retour à la liste</a>
+        </div>
+    </div>
 {% endblock %}
