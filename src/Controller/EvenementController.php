@@ -33,6 +33,9 @@ class EvenementController extends AbstractController
         $evenement = new Evenement();
         $form = $this->createForm(EvenementType::class, $evenement);
         $form->handleRequest($request);
+        $evenements = $entityManager
+            ->getRepository(Evenement::class)
+            ->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($evenement);
@@ -44,6 +47,7 @@ class EvenementController extends AbstractController
         return $this->renderForm('evenement/new.html.twig', [
             'evenement' => $evenement,
             'form' => $form,
+            'evenements' => $evenements,
         ]);
     }
 
@@ -54,8 +58,13 @@ class EvenementController extends AbstractController
             ->getRepository(Evenement::class)
             ->find($id);
 
+        $evenements = $entityManager
+            ->getRepository(Evenement::class)
+            ->findAll();
+
         return $this->render('evenement/show.html.twig', [
             'evenement' => $evenement,
+            'evenements' => $evenements,
         ]);
     }
 
@@ -65,6 +74,10 @@ class EvenementController extends AbstractController
         $evenement = $entityManager
             ->getRepository(Evenement::class)
             ->find($id);
+
+        $evenements = $entityManager
+            ->getRepository(Evenement::class)
+            ->findAll();
         $form = $this->createForm(EvenementType::class, $evenement);
         $form->handleRequest($request);
 
@@ -77,6 +90,7 @@ class EvenementController extends AbstractController
         return $this->renderForm('evenement/edit.html.twig', [
             'evenement' => $evenement,
             'form' => $form,
+            'evenements' => $evenements
         ]);
     }
 

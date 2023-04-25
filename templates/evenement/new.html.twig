@@ -1,6 +1,7 @@
 {% extends 'template.html.twig' %}
 
 {% block body %}
+
     <div class="card col-md-12">
         <div class="card-header">
             <h3 class="card-title">Ajouter un nouvel événement</h3>
@@ -9,7 +10,66 @@
             {{ include('evenement/_form.html.twig', {'button_label': 'Ajouter'}) }}
         </div>
         <div class="card-footer">
-            <a href="{{ path('app_evenement_index') }}" class="btn btn-default">Retour à la liste</a>
+            <a href="{{ path('app_evenement_index') }}" class="btn btn-default">Retour à la
+                liste</a>
         </div>
     </div>
+
+    <link rel="stylesheet" href="{{ asset('plugins/fullcalendar/main.min.css') }}">
+    <script src="{{ asset('plugins/fullcalendar/main.min.js') }}"></script>
+    <div class="container mt-4">
+
+
+        <link rel="stylesheet" href="{{ asset('plugins/fullcalendar/main.min.css') }}">
+        <script src="{{ asset('plugins/fullcalendar/main.min.js') }}"></script>
+        <div class="card">
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [
+                    {% for evenement in evenements %}
+                    {
+                        title: "{{ evenement.nom }}",
+                        start: "{{ evenement.dateD|date('Y-m-d') }}",
+                        end: "{{ evenement.dateF|date('Y-m-d') }}",
+                        url: "{{ path('app_evenement_show', {'id': evenement.id}) }}"
+                    },
+                    {% endfor %}
+                ],
+                themeSystem: 'bootstrap',
+                eventColor: '#ffb013',
+                eventTextColor: '#ffffff',
+                eventBorderColor: '#ffb013',
+                eventBackgroundColor: '#ffb013',
+                eventTimeFormat: { // like '14:30:00'
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                eventClick: function (info) {
+                    info.jsEvent.preventDefault();
+                    window.location = info.event.url;
+                }
+            });
+
+            calendar.render();
+        });
+
+    </script>
+
+
 {% endblock %}
