@@ -141,6 +141,8 @@ class EvenementController extends AbstractController
             }
         }
 
-        return new Response('SMS messages sent.');
+        $this->addFlash('success', 'Les abonnés ont été notifiés.');
+        return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+
     }
 }

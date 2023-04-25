@@ -1,6 +1,7 @@
 {% extends 'template.html.twig' %}
 
 {% block body %}
+
     <h1 class="mb-4">Evenements</h1>
     <div class="table-responsive">
         <table class="table table-striped">
@@ -46,4 +47,13 @@
     <a href="{{ path('app_evenement_new') }}" class="nav-link btn btn-success"><i class="fas fa-plus"></i> Créer un
         nouvel
         événement</a>
+    <div>
+        {% for flash_message in app.flashes('success') %}
+            <div class="alert alert-success">{{ flash_message }}</div>
+        {% endfor %}
+
+        {% for flash_message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ flash_message }}</div>
+        {% endfor %}
+    </div>
 {% endblock %}

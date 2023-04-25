@@ -13,13 +13,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 
 class UserType extends AbstractType
@@ -127,7 +125,6 @@ class UserType extends AbstractType
 
             ])
             ->add('photo', FileType::class, [
-
                 'label' => 'Photo (fichier JPG ou PNG)',
                 'mapped' => false,
                 'required' => false,
@@ -141,7 +138,7 @@ class UserType extends AbstractType
                         'mimeTypesMessage' => 'Veuillez télécharger une image JPG ou PNG valide.',
                     ])
                 ],
-                'data_class' => null, // add this line to handle the new photo field type
+                'data_class' => null,
 
             ])
             ->add('pwd', PasswordType::class, [
@@ -168,15 +165,7 @@ class UserType extends AbstractType
                     new NotBlank([
                         'message' => 'Veuillez confirmer le mot de passe.',
                     ]),
-                    new Callback([
-                        'callback' => function ($value, ExecutionContextInterface $context) use ($builder) {
-                            $password = $builder->getData()->getPwd();
-                            if ($password !== null && $password !== $value) {
-                                $context->buildViolation('Les mots de passe ne correspondent pas.')->addViolation();
-                            }
-                        },
-                        'payload' => ['builder' => $builder],
-                    ]),
+
                 ],
             ])
             ->add('valeurFidelite', TextType::class, [
@@ -186,6 +175,7 @@ class UserType extends AbstractType
                     new Length([
                         'min' => 0,
                         'max' => 10000,
+                        'minMessage' => 'Veuillez saisir un nombre positif.'
                     ]),
                 ],
             ])
