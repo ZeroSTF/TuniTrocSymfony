@@ -9,10 +9,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use Knp\Snappy\Pdf;
+
+
 
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
 {
+    private $pdf;
+
+    public function __construct(Pdf $pdf)
+    {
+        $this->pdf = $pdf;
+    }
+
     #[Route('/', name: 'app_reclamation_index', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager): Response
     {
@@ -102,5 +113,27 @@ class ReclamationController extends AbstractController
             'reclamations_traitees' => $reclamationsTraitees,
         ]);
     }
+   
+
+
+    /**
+ * @Route("/reclamation/pdf", name="app_reclamation_pdf", methods={"GET"})
+ */
+public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
+{
+    $reclamations = $entityManager
+        ->getRepository(Reclamation::class)
+        ->findAll();
+
+    $html = $this->renderView('reclamation/exportPDF.html.twig', [
+        'reclamations' => $reclamations,
+    ]);
+
+    return new PdfResponse(
+        $pdf->getOutputFromHtml($html),
+        'reclamations.pdf'
+    );
+}
+
 
 }

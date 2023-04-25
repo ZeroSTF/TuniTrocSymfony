@@ -21,7 +21,7 @@
                 <td>{{ reclamation.etat ? 'Yes' : 'No' }}</td>
                 <td>
                     <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}">show</a>
-                    <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}">edit</a>
+                    <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="fas fa-pencil-alt">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -32,6 +32,8 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_reclamation_new') }}">Create new</a>
-    <a href="{{ path('app_reclamation_statistics') }}">Statistiques</a>
+    <a href="{{ path('app_reclamation_new') }}" class="btn btn-primary">Create new</a>
+    <a href="{{ path('app_reclamation_statistics') }}" class="btn btn-primary">Statistiques</a>
+    <a href="{{ path('app_reclamation_pdf') }}" target="_blank" class="btn btn-primary">Export to PDF</a>
+
 {% endblock %}
