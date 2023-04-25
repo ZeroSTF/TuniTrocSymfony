@@ -65,6 +65,7 @@ class Reclamation
 private $photo;
 
 
+
 public function getPhoto(): ?string
 {
     return $this->photo;
