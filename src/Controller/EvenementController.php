@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Evenement;
+use App\Entity\User;
 use App\Form\EvenementType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twilio\Rest\Client;
 
 #[Route('/evenement')]
 class EvenementController extends AbstractController
@@ -90,5 +92,41 @@ class EvenementController extends AbstractController
         }
 
         return $this->redirectToRoute('app_evenement_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/notifier', name: 'app_evenement_notifier')]
+    public function notifier(int $id, EntityManagerInterface $entityManager): Response
+    {
+        // Get the Twilio credentials from environment variables
+        $accountSid = $_ENV['TWILIO_ACCOUNT_SID'];
+        $authToken = $_ENV['TWILIO_AUTH_TOKEN'];
+        $twilioNumber = $_ENV['TWILIO_PHONE_NUMBER'];
+
+        // Create a Twilio client instance
+        $client = new Client($accountSid, $authToken);
+
+        $evenement = $entityManager
+            ->getRepository(Evenement::class)
+            ->find($id);
+        $users = $entityManager
+            ->getRepository(User::class)
+            ->findAll();
+
+        $message = 'Il y a un événement le ' . $evenement->getDateD()->format('Y-m-d') . ': ' . $evenement->getNom();
+
+        foreach ($users as $user) {
+            $phoneNumber = $user->getNumTel();
+            if (!empty($phoneNumber && $user->getEtat() == "SUBSCRIBED")) {
+                $client->messages->create("+216" .
+                    $phoneNumber,
+                    array(
+                        'from' => $twilioNumber,
+                        'body' => $message
+                    )
+                );
+            }
+        }
+
+        return new Response('SMS messages sent.');
     }
 }

@@ -202,7 +202,8 @@ class UserType extends AbstractType
                     'INACTIVE' => 'INACTIVE',
                     'BLOCKED' => 'BLOCKED',
                     'PENDING' => 'PENDING',
-                    'DELETED' => 'DELETED'
+                    'DELETED' => 'DELETED',
+                    'SUBSCRIBED' => 'SUBSCRIBED'
                 ]
             ]);
     }
