@@ -1,0 +1,66 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center"><i class="bi bi-shop"></i> TuniTroc</h1>
+        <h2 class="text-center mb-5">Welcome to your Dashboard</h2>
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-truck"></i> Gestion Du Transport</h5>
+                        <p class="card-text">Voir la liste des livreurs.</p>
+                        <a href="transporteur" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-cart-check"></i> Les Echanges</h5>
+                        <p class="card-text">Vérifiez le statut des commandes et gérez-les.</p>
+                        <a href="echange" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-person-check"></i> Les Utilisateurs</h5>
+                        <p class="card-text">Vérifiez l'état de vos utilisateurs et gérez-les.</p>
+                        <a href="user" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-cart"></i> Gestion du panier</h5>
+                        <p class="card-text">Visualisez le contenu de votre panier et gérez-le.</p>
+                        <a href="panier" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Gestion des réclamations</h5>
+                        <p class="card-text">Visualisez les réclamations soumises et gérez-les.</p>
+                        <a href="reclamation" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Gestion des événements</h5>
+                        <p class="card-text">Visualisez les événements soumises et gérez-les.</p>
+                        <a href="evenement" class="btn btn-primary"><i class="bi bi-eye"></i> View</a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}
