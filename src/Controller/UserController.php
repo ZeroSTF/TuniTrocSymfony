@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Produit;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +28,30 @@ class UserController extends AbstractController
 
         return $this->render('user/index.html.twig', [
             'users' => $users,
+        ]);
+    }
+
+    #[Route('/statistics', name: 'app_user_statistics', methods: ['GET'])]
+    public function statistics(EntityManagerInterface $entityManager): Response
+    {
+        $usersByVille = $entityManager
+            ->createQueryBuilder()
+            ->select('u.ville, COUNT(u) as count')
+            ->from(User::class, 'u')
+            ->groupBy('u.ville')
+            ->getQuery()
+            ->getResult();
+
+        $data = [];
+        foreach ($usersByVille as $row) {
+            $data[] = [
+                'label' => $row['ville'],
+                'value' => $row['count'],
+            ];
+        }
+
+        return $this->render('user/statistics.html.twig', [
+            'data' => $data,
         ]);
     }
 
@@ -83,6 +108,27 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/profile', name: 'app_user_profile', methods: ['GET'])]
+    public function profile(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $user = $entityManager
+            ->getRepository(User::class)
+            ->find($id);
+
+        $produits = $entityManager
+            ->getRepository(Produit::class)
+            ->findBy(['idUser' => $id]);
+
+        $nbProduits = count($produits);
+
+        return $this->render('front/profile.html.twig', [
+            'user' => $user,
+            'produits' => $produits,
+            'nbProduits' => $nbProduits,
+        ]);
+    }
+
+
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
@@ -124,7 +170,7 @@ class UserController extends AbstractController
             // get the value of the "valeurFidelite" field
             $valeurFidelite = $form->get('valeurFidelite')->getData();
 
-// check if the value is not set or is empty
+            // check if the value is not set or is empty
             if (!isset($valeurFidelite) || empty($valeurFidelite)) {
                 // if it's not set, set it to 0
                 $user->setValeurFidelite(0);
@@ -148,7 +194,7 @@ class UserController extends AbstractController
     }
 
 
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $user = $entityManager

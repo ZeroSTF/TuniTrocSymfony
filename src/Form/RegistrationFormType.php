@@ -12,11 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Constraints\Choice;
-use Symfony\Component\Validator\Constraints\Expression;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
@@ -27,37 +24,71 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class RegistrationFormType extends AbstractType
 {
-    
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('email', EmailType::class, [
+                'required' => false,
                 'attr' => ['class' => 'form-control'],
-                'label' => 'Email'
+                'label' => 'Email',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer une adresse email',
+                    ]),
+                    new Email([
+                        'mode' => 'strict',
+                        'message' => 'L\'adresse email "{{ value }}" n\'est pas valide',
+                    ]),],
             ])
             ->add('nom', TextType::class, [
+                'required' => false,
                 'attr' => ['class' => 'form-control'],
-                'label' => 'Nom'
+                'label' => 'Nom',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un nom',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'max' => 255,
+                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le nom doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('prenom', TextType::class, [
+                'required' => false,
                 'attr' => ['class' => 'form-control'],
-                'label' => 'Prenom'
+                'label' => 'Prenom',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un prénom',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'max' => 255,
+                        'minMessage' => 'Le prénom doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le prénom doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                ],
             ])
             ->add('numTel', TextType::class, [
+                'required' => false,
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Numero de Telephone',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter your phone number',
+                        'message' => 'Veuillez saisir le numéro de téléphone.',
                     ]),
                     new Length([
                         'min' => 8,
                         'max' => 8,
-                        'exactMessage' => 'Your phone number should be exactly {{ limit }} numbers',
+                        'exactMessage' => 'Le numéro de téléphone doit comporter exactement {{ limit }} chiffres.',
                     ]),
                     new Regex([
                         'pattern' => '/^\d+$/',
-                        'message' => 'Your phone number should only contain numbers',
+                        'message' => 'Le numéro de téléphone doit contenir uniquement des chiffres.',
                     ]),
                 ],
             ])
@@ -90,43 +121,12 @@ class RegistrationFormType extends AbstractType
                     'Tunis' => 'Tunis',
                     'Zaghouan' => 'Zaghouan',
                 ],
-                'constraints' => [
-                    new Choice([
-                        'choices' => [
-                            'Ariana',
-                            'Beja',
-                            'Ben Arous',
-                            'Bizerte',
-                            'Gabes',
-                            'Gafsa',
-                            'Jendouba',
-                            'Kairouan',
-                            'Kasserine',
-                            'Kebili',
-                            'Kef',
-                            'Mahdia',
-                            'Manouba',
-                            'Medenine',
-                            'Monastir',
-                            'Nabeul',
-                            'Sfax',
-                            'Sidi Bouzid',
-                            'Siliana',
-                            'Sousse',
-                            'Tataouine',
-                            'Tozeur',
-                            'Tunis',
-                            'Zaghouan',
-                        ],
-                        'message' => 'Please choose a valid city',
-                    ]),
-                ],
             ])
             ->add('photo', FileType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Photo (JPG or PNG file)',
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
@@ -134,60 +134,58 @@ class RegistrationFormType extends AbstractType
                             'image/jpeg',
                             'image/png',
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid JPG or PNG image',
+                        'mimeTypesMessage' => 'Veuillez télécharger une image JPG ou PNG valide.',
                     ])
                 ],
                 'data_class' => null, // add this line to handle the new photo field type
             ])
-            
-            
-        ->add('pwd', PasswordType::class, [
-            'attr' => ['class' => 'form-control'],
-            'label' => 'Password',
-            
-            'mapped' => false,
-            'constraints' => [
-                new NotBlank([
-                    'message' => 'Please enter a password',
-                ]),
-                new Length([
-                    'min' => 6,
-                    'minMessage' => 'Your password should be at least {{ limit }} characters',
-                    // max length allowed by Symfony for security reasons
-                    'max' => 4096,
-                ])
-                
-            ],
-        ])
-        ->add('confirm_password', PasswordType::class, [
-            'attr' => ['class' => 'form-control'],
-            'label' => 'Confirm Password',
-            'help' => 'Your password must be at least 6 characters long.',
-            'mapped' => false,
-            'constraints' => [
-                new NotBlank([
-                    'message' => 'Please confirm your password',
-                ]),
-                new Length([
-                    'min' => 6,
-                    'minMessage' => 'Your password should be at least {{ limit }} characters',
-                    // max length allowed by Symfony for security reasons
-                    'max' => 4096,
-                ]),
-                new Callback([
-                    'callback' => function ($value, ExecutionContextInterface $context) use ($builder) {
-                        $password = $builder->getData()->getPwd();
-                        if ($password !== null && $password !== $value) {
-                            $context->buildViolation('Your passwords do not match')->addViolation();
-                        }
-                    },
-                    'payload' => ['builder' => $builder],
-                ]),
-                
-            ],
-        ]);
-        
-        
+            ->add('pwd', PasswordType::class, [
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'label' => 'Password',
+
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez saisir un mot de passe.',
+                    ]),
+                    new Length([
+                        'min' => 6,
+                        'minMessage' => 'Le mot de passe doit comporter au moins {{ limit }} caractères.',
+                        // max length allowed by Symfony for security reasons
+                        'max' => 4096,
+                    ])
+                ],
+            ])
+            ->add('confirm_password', PasswordType::class, [
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'label' => 'Confirm Password',
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please confirm your password',
+                    ]),
+                    new Length([
+                        'min' => 6,
+                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        // max length allowed by Symfony for security reasons
+                        'max' => 4096,
+                    ]),
+                    new Callback([
+                        'callback' => function ($value, ExecutionContextInterface $context) use ($builder) {
+                            $password = $builder->getData()->getPwd();
+                            if ($password !== null && $password !== $value) {
+                                $context->buildViolation('Your passwords do not match')->addViolation();
+                            }
+                        },
+                        'payload' => ['builder' => $builder],
+                    ]),
+
+                ],
+            ]);
+
+
         $builder->add('agreeTerms', CheckboxType::class, [
             'mapped' => false,
             'constraints' => [
@@ -198,8 +196,8 @@ class RegistrationFormType extends AbstractType
             'label' => 'Agree to terms',
         ]);
 
-        
-}
+
+    }
 
 
     public function configureOptions(OptionsResolver $resolver): void

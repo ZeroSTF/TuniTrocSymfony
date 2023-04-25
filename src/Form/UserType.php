@@ -3,28 +3,34 @@
 namespace App\Form;
 
 
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 
 class UserType extends AbstractType
 {
+    private $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
@@ -141,7 +147,6 @@ class UserType extends AbstractType
             ->add('pwd', PasswordType::class, [
                 'required' => false,
                 'label' => 'Mot de Passe',
-
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank([
@@ -153,13 +158,11 @@ class UserType extends AbstractType
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ])
-
                 ],
             ])
             ->add('confirm_password', PasswordType::class, [
                 'required' => false,
                 'label' => 'Confirmer le mot de passe',
-                'help' => 'Votre mot de passe doit comporter au moins 6 caractères.',
                 'mapped' => false,
                 'constraints' => [
                     new NotBlank([
@@ -168,15 +171,12 @@ class UserType extends AbstractType
                     new Callback([
                         'callback' => function ($value, ExecutionContextInterface $context) use ($builder) {
                             $password = $builder->getData()->getPwd();
-                            dump($password);
-                            dump($value);
                             if ($password !== null && $password !== $value) {
-                                $context->buildViolation('Les mot de passes ne sont pas identiques.')->addViolation();
+                                $context->buildViolation('Les mots de passe ne correspondent pas.')->addViolation();
                             }
                         },
                         'payload' => ['builder' => $builder],
                     ]),
-
                 ],
             ])
             ->add('valeurFidelite', TextType::class, [
