@@ -89,6 +89,7 @@ class UserController extends AbstractController
                 // if it's not set, set it to 0
                 $user->setValeurFidelite(0);
             }
+
             $user->setSalt("");
             $user->setPwd(
                 $userPasswordHasher->hashPassword(
@@ -128,7 +129,6 @@ class UserController extends AbstractController
         ]);
     }
 
-
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
@@ -146,7 +146,9 @@ class UserController extends AbstractController
     {
         $user = $entityManager->getRepository(User::class)->find($id);
         $oldPhotoFilename = $user->getPhoto();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, [
+            'include_password_fields' => false,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -176,12 +178,6 @@ class UserController extends AbstractController
                 $user->setValeurFidelite(0);
             }
             $user->setSalt("");
-            $user->setPwd(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('pwd')->getData()
-                )
-            );
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -192,7 +188,6 @@ class UserController extends AbstractController
             'form' => $form,
         ]);
     }
-
 
     #[Route('/{id}/delete', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
@@ -207,6 +202,5 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
-
 
 }

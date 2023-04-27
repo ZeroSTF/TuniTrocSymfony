@@ -6,6 +6,7 @@
             <h3 class="card-title">Ajouter un nouvel utilisateur</h3>
         </div>
         <div class="card-body">
+            {% set show_lines = true %}
             {{ include('user/_form.html.twig', {'button_label': 'Ajouter'}) }}
         </div>
         <div class="card-footer">

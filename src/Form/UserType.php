@@ -24,14 +24,14 @@ class UserType extends AbstractType
 {
     private $passwordHasher;
 
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    public function __construct(UserPasswordHasherInterface $passwordHasher, bool $includePasswordFields = true)
     {
         $this->passwordHasher = $passwordHasher;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
+        $includePasswordFields = $options['include_password_fields'];
         $builder
             ->add('email', EmailType::class, [
                 'required' => false,
@@ -140,8 +140,9 @@ class UserType extends AbstractType
                 ],
                 'data_class' => null,
 
-            ])
-            ->add('pwd', PasswordType::class, [
+            ]);
+        if ($includePasswordFields) {
+            $builder->add('pwd', PasswordType::class, [
                 'required' => false,
                 'label' => 'Mot de Passe',
                 'mapped' => false,
@@ -157,28 +158,29 @@ class UserType extends AbstractType
                     ])
                 ],
             ])
-            ->add('confirm_password', PasswordType::class, [
-                'required' => false,
-                'label' => 'Confirmer le mot de passe',
-                'mapped' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez confirmer le mot de passe.',
-                    ]),
+                ->add('confirm_password', PasswordType::class, [
+                    'required' => false,
+                    'label' => 'Confirmer le mot de passe',
+                    'mapped' => false,
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Veuillez confirmer le mot de passe.',
+                        ]),
 
-                ],
-            ])
-            ->add('valeurFidelite', TextType::class, [
-                'required' => false,
-                'label' => 'Valeur Fidelité',
-                'constraints' => [
-                    new Length([
-                        'min' => 0,
-                        'max' => 10000,
-                        'minMessage' => 'Veuillez saisir un nombre positif.'
-                    ]),
-                ],
-            ])
+                    ],
+                ]);
+        }
+        $builder->add('valeurFidelite', TextType::class, [
+            'required' => false,
+            'label' => 'Valeur Fidelité',
+            'constraints' => [
+                new Length([
+                    'min' => 0,
+                    'max' => 10000,
+                    'minMessage' => 'Veuillez saisir un nombre positif.'
+                ]),
+            ],
+        ])
             ->add('role', ChoiceType::class, [
                 'choices' => [
                     'Admin' => true,
@@ -203,6 +205,8 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'include_password_fields' => true,
         ]);
+        $resolver->setAllowedTypes('include_password_fields', 'bool');
     }
 }
