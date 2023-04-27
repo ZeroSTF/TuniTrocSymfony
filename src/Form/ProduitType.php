@@ -16,7 +16,11 @@ class ProduitType extends AbstractType
             ->add('categorie')
             ->add('nom')
             ->add('libelle')
-            ->add('photo')
+            //->add('photo')
+            ->add('photo', FileType::class, [
+                'label' => 'Photo (jpg, png, gif)',
+                'required' => false,
+            ])
             ->add('ville')
             ->add('idUser')
         ;
