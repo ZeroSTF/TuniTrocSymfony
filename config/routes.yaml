@@ -8,17 +8,10 @@ accueil:
     controller: App\Controller\DefaultController::index
 
 
-# config/routes.yaml
-post:
-    path: /post
-    controller: App\Controller\PostController::index
+front_post:
+    path: /front/post
+    controller: App\Controller\FrontPostController::index
 
-
-
-# config/routes.yaml
-commentaire:
-    path: /commentaire
-    controller: App\Controller\CommentaireController::index
 
 post_index:
     path: /crudpost
@@ -42,5 +35,15 @@ app_panier_index:
 app_produit_index:
   path: /produit
   controller: App\Controller\ProduitController::index
+
+app_stat_commentaire:
+  path: /stat_commentaire
+  controller: App\Controller\CRUDCommentaireController::statAction
+
+
+app_stat_crud:
+  path: /stat_post
+  controller: App\Controller\CRUDPostController::statAction
+
 
 

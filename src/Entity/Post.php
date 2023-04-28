@@ -2,15 +2,19 @@
 
 namespace App\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
- */
+ */   
 class Post
 {
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -32,6 +36,8 @@ class Post
      */
     private $contenu;
 
+
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -51,6 +57,19 @@ class Post
      * @ORM\Column(type="integer")
      */
     private $dislikes;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\Image(
+     *     mimeTypesMessage = "Please upload a valid image"
+     * )
+     */
+    private $img;
+
+    /**
+     * @Vich\UploadableField(mapping="post_images", fileNameProperty="img")
+     */
+    private $imgFile;
 
     public function getId(): ?int
     {
@@ -130,6 +149,9 @@ class Post
     }
 
 
+    
+
+
     public function __toString()
 {
     return sprintf(
@@ -138,9 +160,87 @@ class Post
         $this->titre,
         $this->id_user,
         $this->date->format('Y-m-d H:i:s'),
-        $this->likes,
-        $this->dislikes
+        $this->likes, 
+        $this->dislikes,
+        $this->img
     );
 }
+public function getImg(): ?string
+    {
+        return $this->img;
+    }
 
+    public function setImg(?string $img): self
+    {
+        $this->img = $img;
+
+        return $this;
+    }
+
+    public function getImgFile(): ?File
+    {
+        return $this->imgFile;
+    }
+
+    public function setImgFile(?File $imgFile = null): void
+    {
+        $this->imgFile = $imgFile;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload(): void
+    {
+        if (null !== $this->imgFile) {
+            // do whatever you want to generate a unique name
+            $this->img = uniqid('', true).'.'.$this->imgFile->guessExtension();
+        }
+    }
+
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload(): void
+    {
+        if (null === $this->imgFile) {
+            return;
+        }
+
+        $this->imgFile->move(
+            $this->getUploadDir(),
+            $this->img
+        );
+
+        unset($this->imgFile);
+    }
+
+    /**
+     * @ORM\PreRemove()
+     */
+    public function removeUpload(): void
+    {
+        if ($img = $this->getAbsolutePath()) {
+            unlink($img);
+        }
+    }
+
+    public function getAbsolutePath(): ?string
+    {
+        return null === $this->img ? null : $this->getUploadDir().'/'.$this->img;
+    }
+
+    public function getWebPath(): ?string
+    {
+        return null === $this->img ? null : $this->getUploadDir().'/'.$this->img;
+    }
+
+    protected function getUploadDir(): string
+    {
+        // get rid of the __DIR__ so it doesn't screw up
+        // when displaying uploaded doc/image in the view.
+        return 'uploads/post';
+    }
 }

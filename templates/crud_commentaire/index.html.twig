@@ -1,9 +1,52 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/index.html.twig' %}
 
-{% block title %}Commentaire index{% endblock %}
+{% block title %}Commentaire {% endblock %}
 
-{% block body %}
-    <h1>Commentaire index</h1>
+{% block body %}   
+    <head>
+        {% block stylesheets %}
+        <style>
+            /* Style the pagination component */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            /* Style the "previous" and "next" buttons */
+            .pagination .pagination-previous,
+            .pagination .pagination-next {
+                display: inline-block;
+                padding: 5px 10px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 3px;
+                font-size: 16px;
+                text-decoration: none;
+                margin-right: 5px;
+            }
+
+            /* Hover effect for the buttons */
+            .pagination .pagination-previous:hover,
+            .pagination .pagination-next:hover {
+                background-color: #0062cc;
+            }
+
+            /* Active state for the buttons */
+            .pagination .pagination-previous.is-active,
+            .pagination .pagination-next.is-active {
+                background-color: #005cbf;
+            }
+        </style>
+        {% endblock %}
+    </head>
+
+    <h1>Liste des commentaires </h1>
+    <br>
+    <br>
+    <br>
+
 
     <table class="table">
         <thead>
@@ -25,7 +68,7 @@
                 <td>{{ commentaire.likes }}</td>
                 <td>{{ commentaire.dislikes }}</td>
                 <td>
-                    <a href="{{ path('app_c_r_u_d_commentaire_show', {'id': commentaire.id}) }}">show</a>
+                    <a href="{{ path('app_c_r_u_d_commentaire_show', {'id': commentaire.id}) }}" class="btn btn-primary" > show</a>
                     <a href="{{ path('app_c_r_u_d_commentaire_edit', {'id': commentaire.id}) }}">edit</a>
                 </td>
             </tr>
@@ -36,6 +79,12 @@
         {% endfor %}
         </tbody>
     </table>
+        <a href="{{ path('app_c_r_u_d_commentaire_new') }}">Create new</a>
 
-    <a href="{{ path('app_c_r_u_d_commentaire_new') }}">Create new</a>
+
+
+    <div class="pagination">
+        {{ knp_pagination_render(commentaires) }}
+    </div>
+
 {% endblock %}

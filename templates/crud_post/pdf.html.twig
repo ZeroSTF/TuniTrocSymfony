@@ -1,0 +1,107 @@
+Saif Laameri
+{% block title %}  {% endblock %}
+
+{% block body %}
+<html>
+<head>
+<meta charset="UTF-8">
+  <style>
+        /**
+            Set the margins of the page to 0, so the footer and the header
+            can be of the full height and width !
+         **/
+        @page {
+            margin: 1cm 0cm;
+        }
+        /** Define now the real margins of every page in the PDF **/
+        body {
+            margin-top: 3.5cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
+            margin-bottom: 2cm;
+        }
+        /** Define the header rules **/
+        header {
+            position: fixed;
+            top: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 3cm;
+        }
+        /** Define the footer rules **/
+        footer {
+            position: fixed;
+            bottom: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 2cm;
+        }
+       
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+       
+      }
+      
+      th {
+        background-color: #f2f2f2;
+        color: #333;
+        font-weight: bold;
+      }
+      
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+    </style>    
+</head>
+<body>
+<!-- Define header and footer blocks before your content -->
+<header>
+    <div class="intro_price" style="color: purple;margin-left: 10px;margin-top: 10px"><b>Wael Rjeibi</b></div>
+    <div style="font-size: 15px;margin-left: 10px">  Adresse : Esprit Technopole Ghazela Ariana</div>
+    <div style="font-size: 15px;margin-left: 10px">  Numero : +216 29394524</div>
+    <div style="font-size: 15px;margin-left: 10px">  E-mail : Evenet@gmail.com</div>
+
+
+    <hr class="cmDEY eufYP cDHZq" style="color: dimgray;">
+</header>
+
+
+<!-- Ajout de la balise manquante -->
+<main>
+   
+                        
+                                <table >
+                                    <thead>
+                                    
+                                        <tr>
+                                            <th>Nom produit</th>
+                                           <th>prix</th>
+                                         <th>Date Expos</th>
+                                            <th>Date fin</th>
+                                         <th>Disponabilite</th>        
+                                        </tr>
+                                    </thead>
+                                 
+                                   
+                                    <tbody>
+        {% for post in posts %}
+                                        <tr>
+                                             <td>{{ post.id }}</td>
+                <td>{{ post.titre }}</td>
+                <td>{{ post.contenu }}</td>
+                <td>{{ post.date ? post.date|date('Y-m-d H:i:s') : '' }}</td>
+              
+                <td>{{ post.likes }}</td>
+                <td>{{ post.dislikes }}</td>
+                                         </tr>{% endfor %}>
+                                    </tbody>
+                                    
+                                </table>
+                 
+</main>
+
+</body>
+
+</html>
+                                {% endblock %}

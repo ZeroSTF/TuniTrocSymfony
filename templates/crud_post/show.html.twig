@@ -1,5 +1,4 @@
-{% extends 'base.html.twig' %}
-
+{% extends 'admin/index.html.twig' %}
 
 {% block title %}Post{% endblock %}
 
@@ -36,6 +35,16 @@
                 <th>Dislikes</th>
                 <td>{{ post.dislikes }}</td>
             </tr>
+            <tr>
+               <th>Img</th>
+               <td>
+               {% if post.img %}
+               <img src="{{ asset('img/' ~ post.img) }}" alt="{{ post.titre }}">
+        {% endif %}
+    </td>
+</tr>
+
+
         </tbody>
     </table>
 

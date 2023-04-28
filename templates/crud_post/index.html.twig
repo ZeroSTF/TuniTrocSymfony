@@ -1,11 +1,54 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/index.html.twig' %}
 
-{% block title %}Post index{% endblock %}
+{% block title %}Post {% endblock %}
 
 {% block body %}
-    <h1>Post index</h1>
+<head>
+    {% block stylesheets %}
+    <style>
+        /* Style the pagination component */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Style the "previous" and "next" buttons */
+        .pagination .pagination-previous,
+        .pagination .pagination-next {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            font-size: 16px;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        /* Hover effect for the buttons */
+        .pagination .pagination-previous:hover,
+        .pagination .pagination-next:hover {
+            background-color: #0062cc;
+        }
+
+        /* Active state for the buttons */
+        .pagination .pagination-previous.is-active,
+        .pagination .pagination-next.is-active {
+            background-color: #005cbf;
+        }
+    </style>
+{% endblock %}
+</head>
+    <h1>Liste des Posts</h1>
+    <br>
+    <br>
+    <br>
+
 
     <table class="table">
+
         <thead>
             <tr>
                 <th>Id</th>
@@ -15,6 +58,7 @@
                 <th>Id_user</th>
                 <th>Likes</th>
                 <th>Dislikes</th>
+                <th>Img</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -28,18 +72,25 @@
                 <td>{{ post.idUser }}</td>
                 <td>{{ post.likes }}</td>
                 <td>{{ post.dislikes }}</td>
-                <td>
-                    <a href="{{ path('app_c_r_u_d_post_show', {'id': post.id}) }}">show</a>
-                    <a href="{{ path('app_c_r_u_d_post_edit', {'id': post.id}) }}">edit</a>
+<td><img src="{{ asset('uploads/img/' ~ post.img) }}" alt="{{ post.img }} {{ post.img}}" width="100" height="100"></td>                <td>
+                    <a href="{{ path('app_c_r_u_d_post_show', {'id': post.id}) }}" class="btn btn-primary">show</a>
+                    <a href="{{ path('app_c_r_u_d_post_edit', {'id': post.id}) }}" class="btn btn-danger">edit</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="8">no records found</td>
+                <td colspan="9">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+            <a href="{{ path('app_c_r_u_d_post_new') }}" class="btn btn-warning">Create new</a>
 
-    <a href="{{ path('app_c_r_u_d_post_new') }}">Create new</a>
+
+   
+
+    <div class="pagination">
+      {{ knp_pagination_render(posts) }}
+</div>
+
 {% endblock %}
