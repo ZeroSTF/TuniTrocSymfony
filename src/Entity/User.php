@@ -3,6 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * User
@@ -10,7 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="user")
  * @ORM\Entity
  */
-class User
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @var int
@@ -49,17 +54,15 @@ class User
      */
     private $prenom;
 
+     /**
+     * @ORM\Column(name="photo", type="string", length=255, nullable=true)
+     */
+     private $photo;
+
     /**
      * @var string
      *
-     * @ORM\Column(name="photo", type="string", length=255, nullable=false)
-     */
-    private $photo;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="num_tel", type="integer", nullable=false)
+     * @ORM\Column(name="num_tel", type="string", nullable=false)
      */
     private $numTel;
 
@@ -103,7 +106,13 @@ class User
      *
      * @ORM\Column(name="etat", type="string", length=255, nullable=false)
      */
-    private $etat;
+    private string $etat;
+
+    #[ORM\Column(type: 'json')]
+    private $roles = [];
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isVerified = false;
 
     public function getId(): ?int
     {
@@ -158,24 +167,13 @@ class User
         return $this;
     }
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
 
-    public function setPhoto(string $photo): self
-    {
-        $this->photo = $photo;
-
-        return $this;
-    }
-
-    public function getNumTel(): ?int
+    public function getNumTel(): ?string
     {
         return $this->numTel;
     }
 
-    public function setNumTel(int $numTel): self
+    public function setNumTel(string $numTel): self
     {
         $this->numTel = $numTel;
 
@@ -214,6 +212,13 @@ class User
     public function setRole(bool $role): self
     {
         $this->role = $role;
+
+        if($role==true){
+            $this->roles='ROLE_ADMIN';
+        }
+        else{
+            $this->roles='ROLE_USER';
+        }
 
         return $this;
     }
@@ -254,5 +259,102 @@ class User
         return $this;
     }
 
+    /**
+     * The public representation of the user (e.g. a username, an email address, etc.)
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    function getUsername(): string
+    {
+        return "";
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+{
+    $roles = ['ROLE_USER'];
+
+    if ($this->isAdmin()) {
+        $roles[] = 'ROLE_ADMIN';
+    }
+
+    return $roles;
+}
+private function isAdmin(): bool
+{
+    return $this->role === true;
+}
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+        if ($roles=='ROLE_USER'){
+            $this->role=false;
+        }
+        else{
+            $this->role=true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @see PasswordAuthenticatedUserInterface
+     */
+    public function getPassword(): ?string
+    {
+        return $this->pwd;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->pwd = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param mixed $photo
+     */
+    public function setPhoto($photo): void
+    {
+        $this->photo = $photo;
+    }
 
 }

@@ -3,7 +3,18 @@
 
 {% block body %}
     <h1>Reclamation index</h1>
+    <form method="get" action="{{ path('app_reclamation_search') }}">
+    <label for="date">Search by date:</label>
+    <input type="datetime-local" id="date" name="date" value="{{ app.request.query.get('date') ? app.request.query.get('date')|date('Y-m-d\TH:i:s') : '' }}" />
 
+    <button type="submit">Search</button>
+</form>
+
+
+    {% if date %}
+    <p>Showing reclamations before {{ date|date('Y-m-d H:i:s') }}.</p>
+    <a href="{{ path('app_reclamation_index') }}">Reset search</a>
+{% endif %}
     <table class="table">
         <thead>
             <tr>

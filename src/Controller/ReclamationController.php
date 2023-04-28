@@ -16,6 +16,8 @@ use Twilio\Rest\Client;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use DateTime;
+
 
 
 
@@ -29,17 +31,39 @@ class ReclamationController extends AbstractController
         $this->pdf = $pdf;
     }
 
+    
     #[Route('/', name: 'app_reclamation_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
-    {
+#[Route('/search', name: 'app_reclamation_search', methods: ['GET'])]
+public function index(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $dateString = $request->query->get('date');
+    $searchDate = null;
+    $reclamations = null;
+    
+    if ($dateString) {
+        $searchDate = DateTime::createFromFormat('Y-m-d\TH:i', $dateString);
+        if ($searchDate) {
+            $reclamations = $entityManager
+                ->getRepository(Reclamation::class)
+                ->createQueryBuilder('r')
+                ->where('r.date < :date')
+                ->setParameter('date', $searchDate)
+                ->orderBy('r.date', 'DESC')
+                ->getQuery()
+                ->getResult();
+        }
+    } else {
         $reclamations = $entityManager
             ->getRepository(Reclamation::class)
             ->findAll();
-
-        return $this->render('reclamation/index.html.twig', [
-            'reclamations' => $reclamations,
-        ]);
     }
+
+    return $this->render('reclamation/index.html.twig', [
+        'reclamations' => $reclamations,
+        'date' => $searchDate ? $searchDate->format('Y-m-d\TH:i') : null,
+    ]);
+}
+
 
     #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -91,6 +115,24 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $photoFilename = uniqid() . '.' . $photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $photoFilename
+                    );
+                } catch (FileException $e) {
+                    // handle exception if something happens during file upload
+                }
+
+                $reclamation->setPhoto($photoFilename);
+            } else {
+                $reclamation->setPhoto("");
+            }
+            $entityManager->persist($reclamation);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
