@@ -14,6 +14,9 @@ use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints\File;
+
 
 class ReclamationType extends AbstractType
 {
@@ -60,13 +63,26 @@ class ReclamationType extends AbstractType
                 'attr' => ['class' => 'form-control'],
             ])
             ->add('photo', FileType::class, [
-                'label' => 'Photo',
+                'label' => 'Photo (fichier JPG ou PNG)',
+                'mapped' => false,
                 'required' => false,
-                'mapped' => true,
-                'attr' => [
-                    'accept' => 'image/*',
-                    'class' => 'form-control',
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image JPG ou PNG valide.',
+                    ])
                 ],
+            ])
+            ->add('date', null, [
+                'label' => 'Date',
+                'required' => true,
+                'mapped' => true,
+                'data' => new \DateTime(),
+                'attr' => ['class' => 'form-control'],
             ])
         ;
     }
@@ -78,3 +94,5 @@ class ReclamationType extends AbstractType
         ]);
     }
 }
+ 
+

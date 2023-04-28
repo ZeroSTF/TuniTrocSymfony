@@ -64,6 +64,25 @@ class Reclamation
  */
 private $photo;
 
+/**
+ * @var \DateTime
+ *
+ * @ORM\Column(name="date", type="datetime", nullable=false)
+ */
+private $date;
+
+
+public function getDate(): ?\DateTime
+{
+    return $this->date;
+}
+
+public function setDate(\DateTime $date): self
+{
+    $this->date = $date;
+
+    return $this;
+}
 
 
 public function getPhoto(): ?string

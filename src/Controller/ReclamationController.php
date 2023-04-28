@@ -10,7 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+use App\Entity\User;
 use Knp\Snappy\Pdf;
+use Twilio\Rest\Client;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 
 
@@ -42,11 +47,26 @@ class ReclamationController extends AbstractController
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $photoFilename = uniqid() . '.' . $photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $photoFilename
+                    );
+                } catch (FileException $e) {
+                    // handle exception if something happens during file upload
+                }
+
+                $reclamation->setPhoto($photoFilename);
+            } else {
+                $reclamation->setPhoto("");
+            }
             $entityManager->persist($reclamation);
             $entityManager->flush();
-
             return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -135,5 +155,34 @@ public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
     );
 }
 
+#[Route('/{id}/notifier', name: 'app_reclamation_notifier')]
+    public function notifier(int $id, EntityManagerInterface $entityManager): Response
+    {
+        // Get the Twilio credentials from environment variables
+        $accountSid = $_ENV['TWILIO_ACCOUNT_SID'];
+        $authToken = $_ENV['TWILIO_AUTH_TOKEN'];
+        $twilioNumber = $_ENV['TWILIO_PHONE_NUMBER'];
+
+        // Create a Twilio client instance
+        $client = new Client($accountSid, $authToken);
+
+        $reclamation=$this->getDoctrine()->getRepository(Reclamation::class)
+        ->find($id);
+
+        $message = 'Une reclamation contre vous de la part de  ' . $reclamation->getIdUsers()->getPrenom().' '.$reclamation->getIdUsers()->getNom();
+
+            $phoneNumber = $reclamation->getIdUserr()->getNumTel();
+                $client->messages->create("+216" .
+                    $phoneNumber,
+                    array(
+                        'from' => $twilioNumber,
+                        'body' => $message
+                    )
+                );
+
+        return new Response('SMS messages sent.');
+    }
 
 }
+
+

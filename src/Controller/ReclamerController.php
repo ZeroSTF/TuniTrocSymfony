@@ -27,8 +27,10 @@ class ReclamerController extends AbstractController
             $reclamation->setEtat(0);
             $entityManager->persist($reclamation);
             $entityManager->flush();
+            $latestReclamation = $entityManager->getRepository(Reclamation::class)->findOneBy([], ['id' => 'DESC']);
+            $id = $latestReclamation->getId();
+            return $this->redirectToRoute('app_reclamation_notifier', ['id' => $id], Response::HTTP_SEE_OTHER);
 
-            return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
         }
         return $this->renderForm('front/reclamer.html.twig', [
             'reclamation' => $reclamation,
