@@ -1,19 +1,5 @@
 {% extends 'templatefront.html.twig' %}
 
 {% block body %}
-    <div class="col-lg-8">
-        <div class="row">
-            <div class="col-lg-4">
-                <img src="{{ asset('uploads/users/' ~ app.user.photo) }}" class="img-circle elevation-2"
-                     alt="User Photo">
-            </div>
-            <div class="col-lg-8">
-                <h1>{{ app.user.nom }} {{ app.user.prenom }}</h1>
-                <p><strong>Email:</strong> {{ app.user.email }}</p>
-                <p><strong>Valeur fidélité:</strong> {{ app.user.valeurFidelite }}</p>
-                <p><strong>Numéro de téléphone:</strong> {{ app.user.numTel }}</p>
-                <p><strong>Ville:</strong> {{ app.user.ville }}</p>
-            </div>
-        </div>
-    </div>
+
 {% endblock %}
