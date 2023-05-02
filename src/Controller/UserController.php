@@ -4,15 +4,19 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Entity\User;
+use App\Form\UserProfileType;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\Writer;
+use Endroid\QrCode\Writer\WriterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -26,8 +30,17 @@ class UserController extends AbstractController
             ->getRepository(User::class)
             ->findAll();
 
+        // Calculate the highest valeurFidelite value
+        $maxFidelite = 0;
+        foreach ($users as $user) {
+            if ($user->getValeurFidelite() > $maxFidelite) {
+                $maxFidelite = $user->getValeurFidelite();
+            }
+        }
+
         return $this->render('user/index.html.twig', [
             'users' => $users,
+            'maxFidelite' => $maxFidelite,
         ]);
     }
 
@@ -42,6 +55,14 @@ class UserController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        $usersByEtat = $entityManager
+            ->createQueryBuilder()
+            ->select('u.etat, COUNT(u) as count')
+            ->from(User::class, 'u')
+            ->groupBy('u.etat')
+            ->getQuery()
+            ->getResult();
+
         $data = [];
         foreach ($usersByVille as $row) {
             $data[] = [
@@ -50,10 +71,21 @@ class UserController extends AbstractController
             ];
         }
 
+        $data2 = [];
+        foreach ($usersByEtat as $row) {
+            $data2[] = [
+                'label' => $row['etat'],
+                'value' => $row['count'],
+            ];
+        }
+
+
         return $this->render('user/statistics.html.twig', [
             'data' => $data,
+            'data2' => $data2,
         ]);
     }
+
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
@@ -132,12 +164,23 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
+        // Calculate the highest valeurFidelite value
+        $users = $entityManager
+            ->getRepository(User::class)
+            ->findAll();
+        $maxFidelite = 0;
+        foreach ($users as $user) {
+            if ($user->getValeurFidelite() > $maxFidelite) {
+                $maxFidelite = $user->getValeurFidelite();
+            }
+        }
         $user = $entityManager
             ->getRepository(User::class)
             ->find($id);
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
+            'maxFidelite' => $maxFidelite,
         ]);
     }
 
@@ -202,5 +245,42 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id}/qr-code-image', name: 'app_user_qr_code_image', methods: ['GET'])]
+    public function generateQrCodeImage(int $id)
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        $qrCode = new QrCode('Name: ' . $user->getPrenom() . " " . $user->getNom() . "\n" . 'Email: ' . $user->getEmail());
+
+        $writer = new PngWriter();
+        $data = $writer->write($qrCode);
+
+        return new Response($data, 200, ['Content-Type' => $qrCode->getContentType()]);
+    }
+
+    #[Route('/{id}/qr-code', name: 'app_user_qr_code', methods: ['GET'])]
+    public function showQrCode(int $id)
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->find($id);
+
+        if (!$user) {
+            throw $this->createNotFoundException('User not found');
+        }
+
+        $qrCode = new QrCode('Name: ' . $user->getPrenom() . " " . $user->getNom() . "\n" . 'Email: ' . $user->getEmail());
+
+        $writer = new PngWriter();
+        $data = $writer->write($qrCode);
+
+        return $this->render('user/qr_code.html.twig', [
+            'qr_code_data' => base64_encode($data),
+        ]);
+    }
+
 
 }

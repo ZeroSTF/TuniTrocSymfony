@@ -6,6 +6,23 @@
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/users'
 services:
+    Endroid\QrCode\Writer\PngWriter: '@endroid.qrcode.writer.png'
+
+    endroid.qrcode.writer.factory:
+            class: Endroid\QrCode\Writer\WriterFactory
+            arguments:
+                - ['png', 'svg'] # List of supported formats
+                - '%kernel.cache_dir%/endroid/qrcode'
+                - '@monolog.logger'
+            tags: ['monolog.logger']
+    endroid.qrcode.writer.png:
+            class: Endroid\QrCode\Writer\PngWriter
+            arguments: ['@endroid.qrcode.writer.factory']
+            tags: ['endroid.qrcode.writer']
+    endroid.qrcode.writer.svg:
+            class: Endroid\QrCode\Writer\SvgWriter
+            arguments: ['@endroid.qrcode.writer.factory']
+            tags: ['endroid.qrcode.writer']
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

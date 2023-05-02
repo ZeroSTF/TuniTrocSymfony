@@ -41,7 +41,17 @@
                                             </td>
                                             <td>{{ user.numTel }}</td>
                                             <td>{{ user.ville }}</td>
-                                            <td>{{ user.valeurFidelite }}</td>
+                                            <td>
+                                                <div class="progress progress">
+                                                    <div class="progress-bar bg-green" role="progressbar"
+                                                         style="width: {{ user.valeurFidelite / maxFidelite * 100 }}%"
+                                                         aria-valuenow="{{ user.valeurFidelite }}" aria-valuemin="0"
+                                                         aria-valuemax="{{ maxFidelite }}">
+                                                        {{ user.valeurFidelite }}
+                                                    </div>
+                                                </div>
+                                            </td>
+
                                             <td>{% if user.role %}
                                                     <span class="badge badge-primary">Admin</span>
                                                 {% else %}

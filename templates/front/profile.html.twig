@@ -29,6 +29,50 @@
         </div>
         <div class="px-4 py-3"><h5 class="mb-0">Ville</h5>
             <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ user.ville }}</p>
+                <div class="container mt-4">
+                    <div id="map" style="width: 200px; height: 200px;"></div>
+                </div>
+
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                <script>
+
+                    // Get the user's city from the PHP variable passed to the Twig template
+                    const city = "{{ user.ville }}";
+                    console.log(`User's city: ${city}`);
+
+                    // Set up the map
+                    const map = L.map('map').setView([34.8534, 10.1078], 8);
+
+                    // Add the tile layer from OpenStreetMap
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: 'Map data &copy; OpenStreetMap contributors',
+                        maxZoom: 18,
+                    }).addTo(map);
+
+                    // Use the Nominatim API from OpenStreetMap to get the latitude and longitude of the user's city
+                    fetch(`https://nominatim.openstreetmap.org/search?q=${city},Tunisia&format=jsonv2`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(`Nominatim API response:`, data);
+
+                            // Get the first result from the API
+                            const result = data[0];
+
+                            // Get the latitude and longitude from the result
+                            const lat = result.lat;
+                            const lon = result.lon;
+                            console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+
+                            // Add a marker for the user's city
+                            const marker = L.marker([lat, lon]).addTo(map);
+
+                            // Center the map on the marker
+                            map.setView(marker.getLatLng(), 6);
+                        });
+
+                </script>
+
             </div>
             <div class="px-4 py-3"><h5 class="mb-0">Numéro de Téléphone</h5>
                 <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ user.numTel }}</p>

@@ -11,11 +11,23 @@
         </div>
         <a href="{{ path('app_user_index') }}" class="btn btn-default">Retour à la liste</a>
     </div>
+    <div class="card" style="width: 800px; height: 800px;">
+
+        <div class="card-header">
+            <h3 class="card-title">Utilisateurs par Etat</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="chart2" width="400" height="400"></canvas>
+        </div>
+        <a href="{{ path('app_user_index') }}" class="btn btn-default">Retour à la liste</a>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var data = {{ data|json_encode()|raw }};
+        var data2 = {{ data2|json_encode()|raw }};
 
+        // create the first chart for "ville" statistics
         var chart = new Chart('chart', {
             type: 'pie',
             data: {
@@ -39,6 +51,42 @@
                     labels: {
                         fontColor: '#FFFFFF'
                     }
+                }
+            }
+        });
+
+        // create the second chart for "etat" statistics
+        var chart2 = new Chart('chart2', {
+            type: 'bar',
+            data: {
+                labels: data2.map(item => item.label),
+                datasets: [{
+                    label: 'Nombre d\'utilisateurs par état',
+                    data: data2.map(item => item.value),
+                    backgroundColor: [
+                        '#0099cc',
+                        '#00cc99',
+                        '#ff6600',
+                        '#66ccff',
+                        '#9900cc',
+                        '#007a5d',
+                    ],
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    labels: {
+                        fontColor: '#FFFFFF'
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
                 }
             }
         });

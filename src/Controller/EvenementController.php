@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Evenement;
 use App\Entity\User;
 use App\Form\EvenementType;
+use DateInterval;
+use DatePeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +28,54 @@ class EvenementController extends AbstractController
             'evenements' => $evenements,
         ]);
     }
+
+    #[Route('/statistics', name: 'app_evenement_statistics', methods: ['GET'])]
+    public function statistics(EntityManagerInterface $entityManager): Response
+    {
+
+        $events = $entityManager
+            ->createQueryBuilder()
+            ->select('e.dateD, e.dateF')
+            ->from(Evenement::class, 'e')
+            ->getQuery()
+            ->getResult();
+
+        $eventsByMonth = [];
+        foreach ($events as $event) {
+            $date_d = $event['dateD'];
+            $date_f = $event['dateF'];
+            $interval = DateInterval::createFromDateString('1 month');
+            $period = new DatePeriod($date_d, $interval, $date_f);
+
+            foreach ($period as $dt) {
+                $month = $dt->format('n');
+                if (!isset($eventsByMonth[$month])) {
+                    $eventsByMonth[$month] = 1;
+                } else {
+                    $eventsByMonth[$month]++;
+                }
+            }
+        }
+
+        $months = [
+            'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+            'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+        ];
+
+        $data3 = [];
+        foreach ($eventsByMonth as $month => $count) {
+            $monthName = $months[$month - 1]; // month numbers start from 1
+            $data3[] = [
+                'label' => $monthName,
+                'value' => $count,
+            ];
+        }
+
+        return $this->render('evenement/statistics.html.twig', [
+            'data3' => $data3,
+        ]);
+    }
+
 
     #[Route('/new', name: 'app_evenement_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -126,7 +176,13 @@ class EvenementController extends AbstractController
             ->getRepository(User::class)
             ->findAll();
 
-        $message = 'Il y a un événement le ' . $evenement->getDateD()->format('Y-m-d') . ': ' . $evenement->getNom();
+        // Calcul du nombre de jours restants jusqu'à l'événement
+        $diff = $evenement->getDateD()->diff(new \DateTime());
+        $jours_restants = $diff->format('%a');
+
+// Construction du message
+        $message = 'Il y a un événement le ' . $evenement->getDateD()->format('Y-m-d') . ': ' . $evenement->getNom() . ' (' . $jours_restants . ' jours restants)';
+
 
         foreach ($users as $user) {
             $phoneNumber = $user->getNumTel();
@@ -146,3 +202,4 @@ class EvenementController extends AbstractController
 
     }
 }
+
