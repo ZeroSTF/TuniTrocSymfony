@@ -19,7 +19,8 @@ use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-    private EmailVerifier $emailVerifier ;
+    private EmailVerifier $emailVerifier;
+
     public function __construct(EmailVerifier $emailVerifier)
     {
         $this->emailVerifier = $emailVerifier;
@@ -42,7 +43,7 @@ class RegistrationController extends AbstractController
             );
             $photoFile = $form->get('photo')->getData();
             if ($photoFile) {
-                $photoFilename = uniqid().'.'.$photoFile->guessExtension();
+                $photoFilename = uniqid() . '.' . $photoFile->guessExtension();
 
                 try {
                     $photoFile->move(
@@ -59,9 +60,10 @@ class RegistrationController extends AbstractController
             $user->setRole(false);
             $user->setSalt("");
             $user->setEtat("PENDING");
+            $user->setDate(new \DateTime());
             $entityManager->persist($user);
             $entityManager->flush();
-            
+
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
@@ -71,10 +73,9 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
-            
+
             // do anything else you need here, like send an email
 
-            
 
             return $this->redirectToRoute('app_instruction');
         }

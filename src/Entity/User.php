@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\File\File;
 
 /**
  * User
@@ -54,10 +53,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $prenom;
 
-     /**
+    /**
      * @ORM\Column(name="photo", type="string", length=255, nullable=true)
      */
-     private $photo;
+    private $photo;
 
     /**
      * @var string
@@ -95,11 +94,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $salt;
 
     /**
-     * @var string|null
+     * @var \DateTime
      *
-     * @ORM\Column(name="token", type="string", length=255, nullable=true)
+     * @ORM\Column(name="date", type="datetime", nullable=false)
      */
-    private $token;
+    private $date;
+
 
     /**
      * @var string
@@ -213,11 +213,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->role = $role;
 
-        if($role==true){
-            $this->roles='ROLE_ADMIN';
-        }
-        else{
-            $this->roles='ROLE_USER';
+        if ($role == true) {
+            $this->roles = 'ROLE_ADMIN';
+        } else {
+            $this->roles = 'ROLE_USER';
         }
 
         return $this;
@@ -235,17 +234,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getToken(): ?string
+    /**
+     * Get the value of date
+     */
+    public function getDate()
     {
-        return $this->token;
+        return $this->date;
     }
 
-    public function setToken(?string $token): self
+    /**
+     * Set the value of date
+     *
+     * @return  self
+     */
+    public function setDate($date)
     {
-        $this->token = $token;
+        $this->date = $date;
 
         return $this;
     }
+
 
     public function getEtat(): ?string
     {
@@ -266,7 +274,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     function getUsername(): string
@@ -278,31 +286,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @see UserInterface
      */
     public function getRoles(): array
-{
-    $roles = ['ROLE_USER'];
+    {
+        $roles = ['ROLE_USER'];
 
-    if ($this->isAdmin()) {
-        $roles[] = 'ROLE_ADMIN';
+        if ($this->isAdmin()) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        return $roles;
     }
-
-    return $roles;
-}
-private function isAdmin(): bool
-{
-    return $this->role === true;
-}
 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-        if ($roles=='ROLE_USER'){
-            $this->role=false;
-        }
-        else{
-            $this->role=true;
+        if ($roles == 'ROLE_USER') {
+            $this->role = false;
+        } else {
+            $this->role = true;
         }
 
         return $this;
+    }
+
+    private function isAdmin(): bool
+    {
+        return $this->role === true;
     }
 
     /**

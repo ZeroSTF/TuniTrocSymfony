@@ -25,6 +25,10 @@
                 <li class="list-inline-item"><h5
                             class="font-weight-bold mb-0 d-block">{{ user.valeurFidelite }}</h5><small
                             class="text-muted"> <i class="fas fa-star"></i> Points de Fidélité</small></li>
+                <li class="list-inline-item">
+                    <h5 class="font-weight-bold mb-0 d-block">{{ user.date|date('Y-m-d H:i:s')|date_modify('3 hours')|date('M d, Y h:i A') }}</h5>
+                    <small class="text-muted"><i class="fas fa-user-clock"></i> Date d'inscription</small>
+                </li>
             </ul>
         </div>
         <div class="px-4 py-3"><h5 class="mb-0">Ville</h5>

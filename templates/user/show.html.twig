@@ -64,6 +64,10 @@
             <th>État :</th>
             <td>{{ user.etat }}</td>
         </tr>
+        <tr>
+            <th>Date d'inscription :</th>
+            <td class="text-nowrap">{{ user.date|date('Y-m-d H:i:s')|date_modify('3 hours')|date('M d, Y h:i A') }}</td>
+        </tr>
         </tbody>
     </table>
     <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary mt-3"><i class="fas fa-arrow-left"></i>

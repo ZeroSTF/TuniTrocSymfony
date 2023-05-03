@@ -63,6 +63,15 @@ class UserController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        $usersByDate = $entityManager
+            ->createQueryBuilder()
+            ->select('u.date, COUNT(u) as count')
+            ->from(User::class, 'u')
+            ->groupBy('u.date')
+            ->getQuery()
+            ->getResult();
+
+
         $data = [];
         foreach ($usersByVille as $row) {
             $data[] = [
@@ -79,10 +88,19 @@ class UserController extends AbstractController
             ];
         }
 
+        $data3 = [];
+        foreach ($usersByDate as $row) {
+            $data3[] = [
+                'date' => $row['date']->format('m-d'),
+                'count' => $row['count'],
+            ];
+        }
+
 
         return $this->render('user/statistics.html.twig', [
             'data' => $data,
             'data2' => $data2,
+            'data3' => $data3,
         ]);
     }
 
@@ -129,6 +147,7 @@ class UserController extends AbstractController
                     $form->get('pwd')->getData()
                 )
             );
+            $user->setDate(new \DateTime());
             $entityManager->persist($user);
             $entityManager->flush();
 
