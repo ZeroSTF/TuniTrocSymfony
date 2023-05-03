@@ -64,6 +64,36 @@ public function index(Request $request, EntityManagerInterface $entityManager): 
     ]);
 }
 
+#[Route('/statistics', name: 'app_reclamation_statistics', methods: ['GET'])]
+public function statistics(EntityManagerInterface $entityManager): Response
+{
+    $recsByMonth = $entityManager
+        ->createQueryBuilder()
+        ->select('u.date, COUNT(u) as count')
+        ->from(Reclamation::class, 'u')
+        ->groupBy('u.date')
+        ->getQuery()
+        ->getResult();
+
+    $data = [];
+    foreach ($recsByMonth as $row) {
+        $data[] = [
+            'label' => $row['date']->format('Y-m'),
+            'value' => $row['count'],
+        ];
+    }
+
+    // Sort the data by date in ascending order
+    usort($data, function ($a, $b) {
+        return strcmp($a['label'], $b['label']);
+    });
+
+    return $this->render('reclamation/statistics.html.twig', [
+        'data' => $data,
+    ]);
+}
+
+    
 
     #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -155,26 +185,28 @@ public function index(Request $request, EntityManagerInterface $entityManager): 
         return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    /**
-     * @Route("/reclamation/statistics", name="app_reclamation_statistics")
-     */
-    public function statistics(EntityManagerInterface $entityManager): Response
-    {
-        // Récupérez le repository de l'entité Reclamation
-        $reclamationRepository = $entityManager->getRepository(Reclamation::class);
+    // /**
+    //  * @Route("/reclamation/statistics", name="app_reclamation_statistics")
+    //  */
+    // public function statistics(EntityManagerInterface $entityManager): Response
+    // {
+    //     // Récupérez le repository de l'entité Reclamation
+    //     $reclamationRepository = $entityManager->getRepository(Reclamation::class);
 
-        // Comptez le nombre de réclamations en cours
-        $reclamationsEnCours = $reclamationRepository->count(['etat' => true]);
+    //     // Comptez le nombre de réclamations en cours
+    //     $reclamationsEnCours = $reclamationRepository->count(['etat' => true]);
 
-        // Comptez le nombre de réclamations traitées
-        $reclamationsTraitees = $reclamationRepository->count(['etat' => false]);
+    //     // Comptez le nombre de réclamations traitées
+    //     $reclamationsTraitees = $reclamationRepository->count(['etat' => false]);
 
-        // Passez les valeurs des statistiques à la vue
-        return $this->render('reclamation/statistics.html.twig', [
-            'reclamations_en_cours' => $reclamationsEnCours,
-            'reclamations_traitees' => $reclamationsTraitees,
-        ]);
-    }
+    //     // Passez les valeurs des statistiques à la vue
+    //     return $this->render('reclamation/statistics.html.twig', [
+    //         'reclamations_en_cours' => $reclamationsEnCours,
+    //         'reclamations_traitees' => $reclamationsTraitees,
+    //     ]);
+    // }
+
+   
    
 
 
