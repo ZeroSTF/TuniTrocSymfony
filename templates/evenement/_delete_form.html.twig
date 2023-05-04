@@ -1,0 +1,39 @@
+<form id="delete-form-{{ evenement.id }}" method="post"
+      action="{{ path('app_evenement_delete', {'id': evenement.id}) }}">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ evenement.id) }}">
+    <button class="btn btn-outline-danger mt-3" style="margin-top: 16px;"
+            onclick="confirmDelete(event, {{ evenement.id }})">
+        <i class="fas fa-trash-alt"></i>Supprimer
+    </button>
+</form>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmation de suppression</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr(e) de vouloir supprimer cet événement?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(event, eventid) {
+        event.preventDefault();
+        $('#confirmDeleteModal').modal('show');
+        $('#confirmDeleteButton').off('click').on('click', function () {
+            $('#delete-form-' + eventid).submit();
+        });
+    }
+</script>

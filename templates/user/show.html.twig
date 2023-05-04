@@ -1,0 +1,125 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    <h1>Détails de l'utilisateur</h1>
+
+    <table class="table">
+        <tbody>
+        <tr>
+            <th>ID :</th>
+            <td>{{ user.id }}</td>
+        </tr>
+        <tr>
+            <th>Email :</th>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <th>Mot de passe :</th>
+            <td>{{ user.pwd }}</td>
+        </tr>
+        <tr>
+            <th>Nom :</th>
+            <td>{{ user.nom }}</td>
+        </tr>
+        <tr>
+            <th>Prénom :</th>
+            <td>{{ user.prenom }}</td>
+        </tr>
+        <tr>
+            <th>Photo :</th>
+            <td>
+                {% if user.photo %}
+                    <img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="Photo de l'utilisateur" width="100">
+                {% else %}
+                    Pas de photo
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Numéro de téléphone :</th>
+            <td>{{ user.numTel }}</td>
+        </tr>
+        <tr>
+            <th>Ville :</th>
+            <td>{{ user.ville }}</td>
+        </tr>
+        <tr>
+            <th>Valeur de fidélité :</th>
+            <td>
+                <div class="progress progress bg-dark">
+                    <div class="progress-bar bg-green" role="progressbar"
+                         style="width: {{ user.valeurFidelite / maxFidelite * 100 }}%"
+                         aria-valuenow="{{ user.valeurFidelite }}" aria-valuemin="0"
+                         aria-valuemax="{{ maxFidelite }}">
+                        {{ user.valeurFidelite }}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>Rôle :</th>
+            <td>{{ user.role ? 'Administrateur' : 'Client' }}</td>
+        </tr>
+        <tr>
+            <th>État :</th>
+            <td>{{ user.etat }}</td>
+        </tr>
+        <tr>
+            <th>Date d'inscription :</th>
+            <td class="text-nowrap">{{ user.date|date('Y-m-d H:i:s')|date_modify('3 hours')|date('M d, Y h:i A') }}</td>
+        </tr>
+        </tbody>
+    </table>
+    <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary mt-3"><i class="fas fa-arrow-left"></i>
+        Retour à la liste</a>
+
+    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-outline-primary mt-3"><i
+                class="fas fa-edit"></i> Modifier l'utilisateur</a>
+
+
+    {{ include('user/_delete_form.html.twig') }}
+    <div class="container mt-4">
+        <div id="map" style="width: 500px; height: 500px;"></div>
+    </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+
+        // Get the user's city from the PHP variable passed to the Twig template
+        const city = "{{ user.ville }}";
+        console.log(`User's city: ${city}`);
+
+        // Set up the map
+        const map = L.map('map').setView([34.8534, 10.1078], 8);
+
+        // Add the tile layer from OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; OpenStreetMap contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Use the Nominatim API from OpenStreetMap to get the latitude and longitude of the user's city
+        fetch(`https://nominatim.openstreetmap.org/search?q=${city},Tunisia&format=jsonv2`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(`Nominatim API response:`, data);
+
+                // Get the first result from the API
+                const result = data[0];
+
+                // Get the latitude and longitude from the result
+                const lat = result.lat;
+                const lon = result.lon;
+                console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+
+                // Add a marker for the user's city
+                const marker = L.marker([lat, lon]).addTo(map);
+
+                // Center the map on the marker
+                map.setView(marker.getLatLng(), 10);
+            });
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{{ form_start(form) }}
+
+        {% for flash_message in app.flashes('success') %}
+            <div class="alert alert-success">{{ flash_message }}</div>
+        {% endfor %}
+
+{% for flash_message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ flash_message }}</div>
+{% endfor %}
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="far fa-envelope"></i></span>
+        </div>
+        {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+
+    </div>
+    {{ form_errors(form.email, {'attr': {'class': 'invalid-feedback'}}) }}
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+        </div>
+        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+
+    </div>
+    {{ form_errors(form.nom, {'attr': {'class': 'invalid-feedback'}}) }}
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+        </div>
+        {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+
+    </div>
+    {{ form_errors(form.prenom, {'attr': {'class': 'invalid-feedback'}}) }}
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+        </div>
+        {{ form_widget(form.numTel, {'attr': {'class': 'form-control', 'placeholder': 'Numéro de téléphone'}}) }}
+
+    </div>
+    {{ form_errors(form.numTel, {'attr': {'class': 'invalid-feedback'}}) }}
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-city"></i></span>
+        </div>
+        {{ form_widget(form.ville, {'attr': {'class': 'form-control', 'placeholder': 'Ville'}}) }}
+
+    </div>
+    {{ form_errors(form.ville, {'attr': {'class': 'invalid-feedback'}}) }}
+</div>
+<div class="form-group">
+    <div class="custom-file">
+        {{ form_widget(form.photo, {'attr': {'class': 'custom-file-input', 'id': 'customFile'}}) }}
+        <label class="custom-file-label" for="customFile"><i class="fas fa-upload"></i> Choisir une photo...</label>
+    </div>
+    {{ form_errors(form.photo, {'attr': {'class': 'invalid-feedback'}}) }}
+</div>
+{% if show_lines %}
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            </div>
+            {{ form_widget(form.pwd, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
+        </div>
+        {{ form_errors(form.pwd, {'attr': {'class': 'invalid-feedback'}}) }}
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            </div>
+            {{ form_widget(form.confirm_password, {'attr': {'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'}}) }}
+        </div>
+        {{ form_errors(form.confirm_password, {'attr': {'class': 'invalid-feedback'}}) }}
+    </div>
+{% endif %}
+
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-star"></i></span>
+        </div>
+        {{ form_widget(form.valeurFidelite, {'attr': {'class': 'form-control', 'placeholder': 'Valeur de fidélité'}}) }}
+    </div>
+    {{ form_errors(form.valeurFidelite, {'attr': {'class': 'invalid-feedback'}}) }}
+
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-user-shield"></i></span>
+        </div>
+        {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+<div class="form-group">
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+        </div>
+        {{ form_widget(form.etat, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+<button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ button_label|default('Enregistrer') }}
+</button>
+{{ form_end(form) }}
+

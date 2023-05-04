@@ -1,0 +1,100 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Photo</th>
+                                        <th style="white-space: nowrap;">Numéro de téléphone</th>
+                                        <th>Ville</th>
+                                        <th style="white-space: nowrap;">Valeur de fidélité</th>
+                                        <th>Rôle</th>
+                                        <th>État</th>
+                                        <th style="white-space: nowrap;">Date d'inscription</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ user.id }}</td>
+                                            <td>{{ user.email }}</td>
+                                            <td>{{ user.nom }}</td>
+                                            <td>{{ user.prenom }}</td>
+                                            <td>
+                                                {% if user.photo %}
+                                                    <img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="photo"
+                                                         width="100">
+                                                {% else %}
+                                                    No photo
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ user.numTel }}</td>
+                                            <td>{{ user.ville }}</td>
+                                            <td>
+                                                <div class="progress progress">
+                                                    <div class="progress-bar bg-green" role="progressbar"
+                                                         style="width: {{ user.valeurFidelite / maxFidelite * 100 }}%"
+                                                         aria-valuenow="{{ user.valeurFidelite }}" aria-valuemin="0"
+                                                         aria-valuemax="{{ maxFidelite }}">
+                                                        {{ user.valeurFidelite }}
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td>{% if user.role %}
+                                                    <span class="badge badge-primary">Admin</span>
+                                                {% else %}
+                                                    <span class="badge badge-secondary">Client</span>
+                                                {% endif %}</td>
+                                            <td>{{ user.etat }}</td>
+                                            <td class="text-nowrap">{{ user.date|date('Y-m-d H:i:s')|date_modify('3 hours')|date('M d, Y h:i A') }}</td>
+                                            <td class="project-actions text-right" style="white-space: nowrap;">
+                                                <a href="{{ path('app_user_show', {'id': user.getId()}) }}"
+                                                   class="btn btn-sm btn-primary"><i
+                                                            class="fas fa-eye"></i> Voir</a>
+                                                <a href="{{ path('app_user_edit', {'id': user.id}) }}"
+                                                   class="btn btn-sm btn-warning"><i
+                                                            class="fas fa-edit"></i> Modifier</a>
+                                                {{ include('user/_delete_form.html.twig') }}
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="12">Aucun enregistrement trouvé</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <a href="{{ path('app_user_new') }}" class="nav-link btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                Créer un nouvel
+                                utilisateur</a>
+                            </a>
+                            <a href="{{ path('app_user_statistics') }}" class="nav-link btn btn-default">
+                                <i
+                                        class="nav-icon fas fa-chart-pie"></i>
+                                <p>Statistiques</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+

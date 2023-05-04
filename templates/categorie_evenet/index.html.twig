@@ -1,0 +1,45 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}CategorieEvenet {% endblock %}
+
+{% block body %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#rech tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+
+    <input class="form-control" id="myInput" type="text" id="navbar-search-input" placeholder="Search now" aria-label="search" aria-describedby="search">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Descrption</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody id="rech">
+        {% for categorie_evenet in categorie_evenets %}
+            <tr>
+                <td>{{ categorie_evenet.descrption }}</td>
+                <td>
+                    <a class="btn btn-danger" href="{{ path('app_categorieevenet_delete', {'id': categorie_evenet.id}) }}">Supprimer</a>
+                    <a class="btn btn-primary" href="{{ path('app_categorie_evenet_edit', {'id': categorie_evenet.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

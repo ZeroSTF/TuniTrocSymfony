@@ -1,0 +1,39 @@
+{% extends 'templateprodduit.html.twig' %}
+
+{% block body %}
+
+<title>Produit</title>
+<h1>{{ produit.nom }}</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="{{ produit.photo }}" alt="{{ produit.nom }}" class="img-fluid">
+    </div>
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Type</th>
+                    <td>{{ produit.type }}</td>
+                </tr>
+                <tr>
+                    <th>Catégorie</th>
+                    <td>{{ produit.categorie }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ produit.libelle }}</td>
+                </tr>
+                <tr>
+                    <th>Ville</th>
+                    <td>{{ produit.ville }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="{{ path('app_produit_index') }}" class="btn btn-primary">Échanger</a>
+        <a href="{{ path('app_produit_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
+
+{% endblock %}
