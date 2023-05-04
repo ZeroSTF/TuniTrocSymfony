@@ -74,8 +74,6 @@
         <p>Statistiques</p>
     </a>
     <div class="container mt-4">
-
-
         <link rel="stylesheet" href="{{ asset('plugins/fullcalendar/main.min.css') }}">
         <script src="{{ asset('plugins/fullcalendar/main.min.js') }}"></script>
         <div class="card">
@@ -99,6 +97,7 @@
                 events: [
                     {% for evenement in evenements %}
                     {
+                        id: {{ evenement.id }},
                         title: "{{ evenement.nom }}",
                         start: "{{ evenement.dateD|date('Y-m-d') }}",
                         end: "{{ evenement.dateF|date('Y-m-d') }}",
@@ -119,6 +118,37 @@
                 eventClick: function (info) {
                     info.jsEvent.preventDefault();
                     window.location = info.event.url;
+                },
+                editable: true,
+                selectable: true,
+                selectMirror: true,
+                dayMaxEvents: true,
+                select: function (info) {
+                    $('#modalAddEvent').modal('show');
+                    // Set the modal start and end time fields with the selected date/time
+                    $('#modalAddEvent #start').val(moment(info.start).format('YYYY-MM-DD HH:mm:ss'));
+                    $('#modalAddEvent #end').val(moment(info.end).format('YYYY-MM-DD HH:mm:ss'));
+                },
+                eventDrop: function (info) {
+                    var event = {
+                        id: info.event.id,
+                        start: info.event.start,
+                        end: info.event.end
+                    };
+                    console.log(info.event.id);
+                    $.ajax({
+                        url: '{{ path('app_evenement_edit2') }}',
+                        data: {
+                            event: event
+                        },
+                        type: 'POST',
+                        success: function (response) {
+                            console.log('Event updated!');
+                        },
+                        error: function (e) {
+                            console.log('Error updating event: ' + e.responseText);
+                        }
+                    });
                 }
             });
 
@@ -126,4 +156,5 @@
         });
 
     </script>
+
 {% endblock %}

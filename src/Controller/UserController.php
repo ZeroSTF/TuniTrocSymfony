@@ -204,7 +204,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, int $id, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $user = $entityManager->getRepository(User::class)->find($id);
         $oldPhotoFilename = $user->getPhoto();

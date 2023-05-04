@@ -7,8 +7,10 @@ use App\Entity\User;
 use App\Form\EvenementType;
 use DateInterval;
 use DatePeriod;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,6 +29,27 @@ class EvenementController extends AbstractController
         return $this->render('evenement/index.html.twig', [
             'evenements' => $evenements,
         ]);
+    }
+     #[Route('/evenement/edit2', name: 'app_evenement_edit2', methods: ['POST'])]
+
+    public function edit2(Request $request, EntityManagerInterface $entityManager)
+    {
+        $eventId = $request->request->get('event')['id'];
+        $start = DateTime::createFromFormat('D M d Y H:i:s e+', $request->request->get('event')['start']);
+        $end = DateTime::createFromFormat('D M d Y H:i:s e+', $request->request->get('event')['end']);
+
+        $evenement = $entityManager->getRepository(Evenement::class)->find($eventId);
+
+        if (!$evenement) {
+            throw $this->createNotFoundException('The evenement does not exist');
+        }
+
+        $evenement->setDateD($start);
+        $evenement->setDateF($end);
+
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true]);
     }
 
     #[Route('/statistics', name: 'app_evenement_statistics', methods: ['GET'])]

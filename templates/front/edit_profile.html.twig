@@ -7,14 +7,19 @@
     <div class="bg-white shadow rounded overflow-hidden">
         <div class="px-4 pt-0 pb-4 cover">
             <div class="media align-items-end profile-head">
+                <form method="post" action="{{ path('app_edit_profile', {'id': user.id}) }}" enctype="multipart/form-data">
                 <div class="profile mr-3"><img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="..."
                                                width="130" class="rounded mb-2 img-thumbnail"
                                                alt="User Photo">
-                    {% if user == app.user %}
-                    <a href="{{ path('app_edit_profile', {'id': app.user.id}) }}" class="btn btn-light btn-sm btn-block">Edit profile</a></div>
-                {% endif %}
+                    <div class="form-group">
+                        {{ form_widget(registrationForm.photo) }}
+                        {{ form_errors(registrationForm.photo) }}
+                    </div>
+
                 <div class="media-body mb-5 text-white">
-                    <h4 class="mt-0 mb-0">{{ user.prenom }} {{ user.nom }}</h4>
+                    <h4 class="mt-0 mb-0">{{ form_widget(registrationForm.prenom) }}
+                        {{ form_errors(registrationForm.prenom) }} {{ form_widget(registrationForm.nom) }}
+                        {{ form_errors(registrationForm.nom) }}</h4>
                     <p class="small mb-4"><i class="fas fa-map-marker-alt mr-2"></i>New York</p></div>
             </div>
         </div>
@@ -32,7 +37,8 @@
             </ul>
         </div>
         <div class="px-4 py-3"><h5 class="mb-0">Ville</h5>
-            <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ user.ville }}</p>
+            <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ form_widget(registrationForm.ville) }}
+                    {{ form_errors(registrationForm.ville) }}</p>
                 <div class="container mt-4">
                     <div id="map" style="width: 200px; height: 200px;"></div>
                 </div>
@@ -79,7 +85,8 @@
 
             </div>
             <div class="px-4 py-3"><h5 class="mb-0">Numéro de Téléphone</h5>
-                <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ user.numTel }}</p>
+                <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ form_widget(registrationForm.numTel) }}
+                        {{ form_errors(registrationForm.numTel) }}</p>
                 </div>
                 <div class="py-4 px-4">
                     <div class="d-flex align-items-center justify-content-between mb-3"><h5 class="mb-0">Produits</h5>
@@ -95,6 +102,8 @@
                 </div>
             </div>
         </div>
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
     </div>
 
 {% endblock %}

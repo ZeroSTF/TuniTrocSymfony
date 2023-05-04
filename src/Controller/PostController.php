@@ -14,16 +14,18 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 #[Route('/post')]
 class PostController extends AbstractController
 {
     #[Route('/mespost', name: 'app_post_index', methods: ['GET'])]
-    public function index(Request $request,EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
+    public function index(Request $request,EntityManagerInterface $entityManager, PaginatorInterface $paginator, Security $security): Response
     {
+        $user = $security->getUser();
         $posts = $entityManager
             ->getRepository(Post::class)
-            ->findAll();
+            ->findBy(['idUser' => $user]);
         $articles = $paginator->paginate(
             $posts, // Requête contenant les données à paginer (ici nos articles)
             $request->query->getInt('page', 1), // Numéro de la page en cours, passé dans l'URL, 1 si aucune page
@@ -125,14 +127,14 @@ class PostController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'delete')]
-    public function delete(Request $request, Post $post, EntityManagerInterface $entityManager,$id): Response
+    public function delete(Request $request, EntityManagerInterface $entityManager,$id): Response
     {
         $em = $this->getDoctrine()->getManager();
         $res = $em->getRepository(Post::class)->find($id);
 
         $em->remove($res);
         $em->flush();
-        return $this->redirectToRoute('app_post_index');
+        return $this->redirectToRoute('app_post_indexUser');
     }
 
 

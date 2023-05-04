@@ -6,6 +6,9 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
     <title>TuniTroc</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{{ asset ('plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="{{ asset ('assets/favicon.ico') }}"/>
     <!-- Bootstrap icons-->
@@ -38,24 +41,50 @@
                     class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="app_front">Home</a></li>
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_post_new')}}">AddPost</a></li>
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_post_indexUser')}}">ALL Post</a></li>
-                {% if app.user %}
-                    <form class="d-flex">
-                        <a class="nav-link active" aria-current="page" href="{{ path('app_logout') }}">
-                            Logout
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{path('app_produit_index2')}}">
+                            <i class="fas fa-home"></i> Accueil
                         </a>
-                    </form>
-                {% else %}
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page"
-                                                href="{{ path('app_login') }}">Se
-                                Connecter</a></li>
-                        <li class="nav-item"><a class="nav-link active" aria-current="page"
-                                                href="{{ path('app_register') }}">S'inscrire</a></li>
-                    </ul>
-                {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{path('app_front')}}">
+                            <i class="fas fa-users"></i> Nos clients de confiance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{path('app_post_indexUser')}}">
+                            <i class="fas fa-comments"></i> Forum
+                        </a>
+                    </li>
+                    {% if app.user %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_post_index')}}">
+                                <i class="fas fa-newspaper"></i> Mes publications
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_user_profile', {'id': app.user.id}) }}">
+                                <i class="fas fa-user"></i> Mon profil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_login') }}">
+                                <i class="fas fa-sign-in-alt"></i> Se connecter
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{ path('app_register') }}">
+                                <i class="fas fa-user-plus"></i> S'inscrire
+                            </a>
+                        </li>
+                    {% endif %}
+
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">All Products</a></li>
                     <li>
@@ -64,7 +93,6 @@
                     <li><a class="dropdown-item" href="#!">Popular Items</a></li>
                     <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
                 </ul>
-                </li>
             </ul>
         </div>
     </div>

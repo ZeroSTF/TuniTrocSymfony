@@ -1,8 +1,11 @@
 {% extends 'templatefront.html.twig' %}
 
-{% block title %}Mes Posts{% endblock %}
+{% block title %}Forum{% endblock %}
 
 {% block body %}
+    <div class="text-center">
+        <a href="{{ path('app_post_new') }}" class="btn btn-primary">Créer un nouveau post</a>
+    </div>
     {% for post in posts  %}
         <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
             <figure class="effect-ming tm-video-item">
