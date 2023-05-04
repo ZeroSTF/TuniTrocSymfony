@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Commentaire
  *
- * @ORM\Table(name="commentaire", indexes={@ORM\Index(name="post_com", columns={"id_post"}), @ORM\Index(name="user_com", columns={"id_user"})})
+ * @ORM\Table(name="commentaire", indexes={@ORM\Index(name="id_post", columns={"id_post"}), @ORM\Index(name="id_user", columns={"id_user"})})
  * @ORM\Entity
  */
 class Commentaire
@@ -16,11 +16,11 @@ class Commentaire
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="id_commentaire", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    private $idCommentaire;
 
     /**
      * @var string
@@ -32,33 +32,9 @@ class Commentaire
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime", nullable=false)
+     * @ORM\Column(name="date", type="date", nullable=false)
      */
     private $date;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="likes", type="integer", nullable=false)
-     */
-    private $likes;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="dislikes", type="integer", nullable=false)
-     */
-    private $dislikes;
-
-    /**
-     * @var \Post
-     *
-     * @ORM\ManyToOne(targetEntity="Post")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="id_post", referencedColumnName="id")
-     * })
-     */
-    private $idPost;
 
     /**
      * @var \User
@@ -70,9 +46,19 @@ class Commentaire
      */
     private $idUser;
 
-    public function getId(): ?int
+    /**
+     * @var \Post
+     *
+     * @ORM\ManyToOne(targetEntity="Post")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_post", referencedColumnName="id_post")
+     * })
+     */
+    private $idPost;
+
+    public function getIdCommentaire(): ?int
     {
-        return $this->id;
+        return $this->idCommentaire;
     }
 
     public function getContenu(): ?string
@@ -99,26 +85,14 @@ class Commentaire
         return $this;
     }
 
-    public function getLikes(): ?int
+    public function getIdUser(): ?User
     {
-        return $this->likes;
+        return $this->idUser;
     }
 
-    public function setLikes(int $likes): self
+    public function setIdUser(?User $idUser): self
     {
-        $this->likes = $likes;
-
-        return $this;
-    }
-
-    public function getDislikes(): ?int
-    {
-        return $this->dislikes;
-    }
-
-    public function setDislikes(int $dislikes): self
-    {
-        $this->dislikes = $dislikes;
+        $this->idUser = $idUser;
 
         return $this;
     }
@@ -131,18 +105,6 @@ class Commentaire
     public function setIdPost(?Post $idPost): self
     {
         $this->idPost = $idPost;
-
-        return $this;
-    }
-
-    public function getIdUser(): ?User
-    {
-        return $this->idUser;
-    }
-
-    public function setIdUser(?User $idUser): self
-    {
-        $this->idUser = $idUser;
 
         return $this;
     }

@@ -4,58 +4,64 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Post
  *
- * @ORM\Table(name="post", indexes={@ORM\Index(name="user_post", columns={"id_user"})})
+ * @ORM\Table(name="post", indexes={@ORM\Index(name="id_categorie", columns={"id_categorie"}), @ORM\Index(name="id_user", columns={"id_user"})})
  * @ORM\Entity
  */
+#[Vich\Uploadable]
 class Post
 {
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="id_post", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    private $idPost;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="titre", type="string", length=255, nullable=false)
+     *@Assert\NotBlank
+     * @ORM\Column(name="description", type="string", length=255, nullable=false)
+    
      */
-    private $titre;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="contenu", type="string", length=255, nullable=false)
-     */
-    private $contenu;
+    private $description;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date", type="datetime", nullable=false)
+     * @ORM\Column(name="date_p", type="date", nullable=false)
      */
-    private $date;
+    private $dateP;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="likes", type="integer", nullable=false)
+     * @ORM\Column(name="image", type="string", length=255, nullable=false)
      */
-    private $likes;
+    private $image;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="dislikes", type="integer", nullable=false)
-     */
-    private $dislikes;
+    #[Vich\UploadableField(mapping: "post_image", fileNameProperty: "image")]
+
+
+    private $imageFile;
+
+    public function setImageFile(?File $image = null): void
+    {
+        $this->imageFile = $image;
+    }
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
 
     /**
      * @var \User
@@ -67,67 +73,53 @@ class Post
      */
     private $idUser;
 
-    public function getId(): ?int
+    /**
+     * @var \Categorieevent
+     *
+     * @ORM\ManyToOne(targetEntity="Categorieevent")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="id_categorie", referencedColumnName="id")
+     * })
+     */
+    private $idCategorie;
+
+    public function getIdPost(): ?int
     {
-        return $this->id;
+        return $this->idPost;
     }
 
-    public function getTitre(): ?string
+    public function getDescription(): ?string
     {
-        return $this->titre;
+        return $this->description;
     }
 
-    public function setTitre(string $titre): self
+    public function setDescription(string $description): self
     {
-        $this->titre = $titre;
+        $this->description = $description;
 
         return $this;
     }
 
-    public function getContenu(): ?string
+    public function getDateP(): ?\DateTimeInterface
     {
-        return $this->contenu;
+        return $this->dateP;
     }
 
-    public function setContenu(string $contenu): self
+    public function setDateP(\DateTimeInterface $dateP): self
     {
-        $this->contenu = $contenu;
+        $this->dateP = $dateP;
 
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getImage(): ?string
     {
-        return $this->date;
+        return $this->image;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setImage(string $image): self
     {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    public function getLikes(): ?int
-    {
-        return $this->likes;
-    }
-
-    public function setLikes(int $likes): self
-    {
-        $this->likes = $likes;
-
-        return $this;
-    }
-
-    public function getDislikes(): ?int
-    {
-        return $this->dislikes;
-    }
-
-    public function setDislikes(int $dislikes): self
-    {
-        $this->dislikes = $dislikes;
+        $this->image = $image;
 
         return $this;
     }
@@ -143,6 +135,23 @@ class Post
 
         return $this;
     }
+
+    public function getIdCategorie(): ?Categorieevent
+    {
+        return $this->idCategorie;
+    }
+
+    public function setIdCategorie(?Categorieevent $idCategorie): self
+    {
+        $this->idCategorie = $idCategorie;
+
+        return $this;
+    }
+
+
+
+
+
 
 
 }

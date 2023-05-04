@@ -39,6 +39,8 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="app_front">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_post_new')}}">AddPost</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{path('app_post_indexUser')}}">ALL Post</a></li>
                 {% if app.user %}
                     <form class="d-flex">
                         <a class="nav-link active" aria-current="page" href="{{ path('app_logout') }}">
@@ -72,7 +74,7 @@
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
             <h1 class="display-4 fw-bolder">TuniTroc</h1>
-            <p class="lead fw-normal text-white-50 mb-0">C'est le moment de faire du tri</p>
+            <p class="lead fw-normal text-white-50 mb-0">{%block title%}{%endblock%}</p>
         </div>
     </div>
 </header>
