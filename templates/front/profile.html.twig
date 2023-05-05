@@ -88,7 +88,7 @@
                         {% for produit in produits %}
                             <div class="col-lg-6 mb-2 pr-lg-1">
                                 <a href="{{ path('app_produit_show1', {'id': produit.id}) }}">
-                                    <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="" class="img-fluid rounded shadow-sm">
+                                    <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="{{ produit.nom }}" class="img-fluid rounded shadow-sm">
                                 </a>
                             </div>
                         {% endfor %}
