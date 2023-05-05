@@ -27,6 +27,17 @@ class FrontController extends AbstractController
         'controller_name' => 'FrontController',
     ]);
     }
+    #[Route('/frontProduit', name: 'app_produit_index2', methods: ['GET'])]
+    public function index1(EntityManagerInterface $entityManager): Response
+    {
+        $produits = $entityManager
+            ->getRepository(Produit::class)
+            ->findAll();
+
+        return $this->render('produit/index2.html.twig', [
+            'produits' => $produits,
+        ]);
+    }
 
     #[Route('/{id}/edit_profile', name: 'app_edit_profile', methods: ['GET', 'POST'])]
     public function edit_profile(Request $request, int $id, EntityManagerInterface $entityManager): Response
