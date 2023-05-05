@@ -23,10 +23,28 @@ class ReclamerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $reclamation->setCause($translator->trans($form->get('cause')->getData()));
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $photoFilename = uniqid() . '.' . $photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $photoFilename
+                    );
+                } catch (FileException $e) {
+                    // handle exception if something happens during file upload
+                }
+
+                $reclamation->setPhoto($photoFilename);
+            } else {
+                $reclamation->setPhoto("");
+            }
+            $reclamation->setCause($this->filterwords($form->get('cause')->getData()));
             $reclamation->setIdUsers($this->getDoctrine()->getRepository(User::class)->find(7));
             $reclamation->setIdUserr($this->getDoctrine()->getRepository(User::class)->find(9));
             $reclamation->setEtat(0);
+            $reclamation-> setDate(new \DateTime());
             $entityManager->persist($reclamation);
             $entityManager->flush();
             $latestReclamation = $entityManager->getRepository(Reclamation::class)->findOneBy([], ['id' => 'DESC']);
@@ -38,5 +56,13 @@ class ReclamerController extends AbstractController
             'reclamation' => $reclamation,
             'form' => $form,
         ]);
+    }
+    function filterwords($text){
+        $filterWords = array('fuck', 'pute','bitch');
+        $filterCount = sizeof($filterWords);
+        for ($i = 0; $i < $filterCount; $i++) {
+            $text = preg_replace_callback('/\b' . $filterWords[$i] . '\b/i', function($matches){return str_repeat('*', strlen($matches[0]));}, $text);
+        }
+        return $text;
     }
 }

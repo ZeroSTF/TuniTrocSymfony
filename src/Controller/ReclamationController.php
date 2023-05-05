@@ -16,6 +16,9 @@ use Twilio\Rest\Client;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 use DateTime;
 
 
@@ -33,7 +36,7 @@ class ReclamationController extends AbstractController
 
     
     #[Route('/', name: 'app_reclamation_index', methods: ['GET'])]
-#[Route('/search', name: 'app_reclamation_search', methods: ['GET'])]
+    #[Route('/search', name: 'app_reclamation_search', methods: ['GET'])]
 public function index(Request $request, EntityManagerInterface $entityManager): Response
 {
     $dateString = $request->query->get('date');
@@ -62,6 +65,18 @@ public function index(Request $request, EntityManagerInterface $entityManager): 
         'reclamations' => $reclamations,
         'date' => $searchDate ? $searchDate->format('Y-m-d\TH:i') : null,
     ]);
+}
+#[Route('/mes_reclamations', name: 'app_mes_reclamations', methods: ['GET'])]
+public function mes_reclamations(EntityManagerInterface $entityManager, Security $security): Response
+{
+    $userId = $this->security->getUser();
+    $reclamations = $entityManager
+            ->getRepository(Reclamation::class)
+            ->findBy(['id_userS' => $userId]);
+            return $this->render('mes_reclamations.html.twig', [
+                'reclamations' => $reclamations,
+            ]);
+
 }
 
 #[Route('/statistics', name: 'app_reclamation_statistics', methods: ['GET'])]
@@ -96,7 +111,7 @@ public function statistics(EntityManagerInterface $entityManager): Response
     
 
     #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator): Response
     {
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
@@ -119,6 +134,10 @@ public function statistics(EntityManagerInterface $entityManager): Response
             } else {
                 $reclamation->setPhoto("");
             }
+
+            
+            $reclamation->setCause($translator->trans($form->get('cause')->getData()));
+
             $entityManager->persist($reclamation);
             $entityManager->flush();
             return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
@@ -256,6 +275,7 @@ public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
 
         return new Response('SMS messages sent.');
     }
+
 
 }
 
