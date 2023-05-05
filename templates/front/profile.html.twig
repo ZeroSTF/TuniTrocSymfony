@@ -86,11 +86,13 @@
                     </div>
                     <div class="row">
                         {% for produit in produits %}
-                            <div class="col-lg-6 mb-2 pr-lg-1"><img
-                                        src="{{ asset('uploads/produits/' ~ produit.photo) }}"
-                                        alt="" class="img-fluid rounded shadow-sm"></div>
-
+                            <div class="col-lg-6 mb-2 pr-lg-1">
+                                <a href="{{ path('app_produit_show1', {'id': produit.id}) }}">
+                                    <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="" class="img-fluid rounded shadow-sm">
+                                </a>
+                            </div>
                         {% endfor %}
+
                     </div>
                 </div>
             </div>
