@@ -31,7 +31,7 @@
             <th>Photo</th>
             <td>
                 {% if produit.photo %}
-                    <img src="{{ asset('uploads/photos/' ~ produit.photo) }}" alt="product photo" style="max-width: 200px">
+                    <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 200px">
                 {% else %}
                     No photo available
                 {% endif %}
