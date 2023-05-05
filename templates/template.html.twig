@@ -36,8 +36,10 @@
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="/admin" class="nav-link">Home</a>
             </li>
-            <li class="nav-item d-none d-sm-inline-block">
-                <a href="#" class="nav-link">Contact</a>
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{ path('app_logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                </a>
             </li>
         </ul>
 
@@ -288,6 +290,7 @@
             </nav>
             <!-- /.sidebar-menu -->
         </div>
+
         <!-- /.sidebar -->
     </aside>
 

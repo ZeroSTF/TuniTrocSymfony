@@ -19,7 +19,7 @@ class Produit
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    
+
     private $id;
 
     /**
@@ -27,8 +27,8 @@ class Produit
      *
      * @ORM\Column(name="type", type="string", length=255, nullable=false)
      */
-    
-    
+
+
     private $type;
 
     /**
@@ -36,7 +36,7 @@ class Produit
      *
      * @ORM\Column(name="categorie", type="string", length=255, nullable=false)
      */
-    
+
     private $categorie;
 
     /**
@@ -44,8 +44,8 @@ class Produit
      *
      * @ORM\Column(name="nom", type="string", length=255, nullable=false)
      */
-    
-    
+
+
     private $nom;
 
     /**
@@ -168,7 +168,7 @@ class Produit
 
     public function __toString(): string
     {
-        return $this->nom . ' - ' . $this->categorie . ' - ' . $this->ville. $this->type . $this->libelle . $this->ville . $this->photo ;  
+        return $this->nom . ' - ' . $this->categorie . ' - ' . $this->ville. $this->type . $this->libelle . $this->ville . $this->photo ;
     }
 
 }

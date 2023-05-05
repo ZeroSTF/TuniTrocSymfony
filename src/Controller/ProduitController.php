@@ -35,7 +35,7 @@ class ProduitController extends AbstractController
 
         return $this->render('produit/index.html.twig', [
             'produits' => $produits,
-            
+
         ]);
     }
 
@@ -44,27 +44,14 @@ class ProduitController extends AbstractController
     {
         $user = $security->getUser();
         $produits = $entityManager
-            ->getRepository(produit::class)
+            ->getRepository(Produit::class)
             ->findBy(['idUser' => $user]);
-              return $this->render('produit/index3.html.twig', [
+        return $this->render('produit/index3.html.twig', [
             'produits' => $produits,
         ]);
     }
 
-    #[Route('/produit/{id}', name: 'app_produit_show3', methods: ['GET'])]
-public function show3(Request $request, EntityManagerInterface $entityManager, int $id): Response
-{
-    $produit = $entityManager->getRepository(produit::class)->find($id);
-
-    return $this->render('produit/show3.html.twig', [
-        'produit' => $produit,
-    ]);
-}
-
-
-
-
-#[Route('/confirmer-echange', name: 'app_confirmer_echange', methods: ['POST'])]
+    #[Route('/confirmer-echange', name: 'app_confirmer_echange', methods: ['POST'])]
     public function confirmerEchange(SessionInterface $session): Response
     {
         // Effectuer les actions nécessaires pour confirmer l'échange
@@ -91,10 +78,10 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
             ->getQuery()
             ->getResult();
 
-            $response1 = $httpClient->request('GET', 'http://api.openweathermap.org/data/2.5/weather?q=tunis&appid=5b491eb9b69dd529d5cb765278c52609&units=metric&lang=fr');
-            $content1 = $response1->getContent();
-            $weatherData1 = json_decode($content1, true);
-            $weather1 = $weatherData1['weather'];
+        $response1 = $httpClient->request('GET', 'http://api.openweathermap.org/data/2.5/weather?q=tunis&appid=5b491eb9b69dd529d5cb765278c52609&units=metric&lang=fr');
+        $content1 = $response1->getContent();
+        $weatherData1 = json_decode($content1, true);
+        $weather1 = $weatherData1['weather'];
         return $this->render('produit/index2.html.twig', [
             'produits' => $produits,
             'weather_data' => $weatherData1,
@@ -112,7 +99,7 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
             return $total + $sponsor->getMontant();
         }, 0);*/
 
-       foreach ($produits as $produit) {
+        foreach ($produits as $produit) {
             //$pourcentage = ($sponsor->getMontant() / $totalMontant) * 100;
             $csvData[] = [$produit->getId(), $produit->getNom(),$produit->getCategorie()];
         }
@@ -131,7 +118,7 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
     {
 
         $produits = $entityManager->getRepository(Produit::class)->findAll();
-         $html = $this->renderView('produit/pdf.html.twig', [
+        $html = $this->renderView('produit/pdf.html.twig', [
             'produits'=>$produits
         ]);
         $dompdf = new Dompdf();
@@ -146,13 +133,28 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
     }
 
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
-    /*public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // handle photo file upload
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $photoFileName = uniqid().'.'.$photoFile->guessExtension();
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory_produit'),
+                        $photoFileName
+                    );
+                    $produit->setPhoto($photoFileName);
+                } catch (FileException $e) {
+                    // handle exception
+                }
+            }
+
             $entityManager->persist($produit);
             $entityManager->flush();
 
@@ -163,69 +165,76 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
             'produit' => $produit,
             'form' => $form,
         ]);
-    }*/
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-{
-    $produit = new Produit();
-    $form = $this->createForm(ProduitType::class, $produit);
-    $form->handleRequest($request);
+    }
 
-    if ($form->isSubmitted() && $form->isValid()) {
-        // handle photo file upload
-        $photoFile = $form->get('photo')->getData();
-        if ($photoFile) {
-            $photoFileName = uniqid().'.'.$photoFile->guessExtension();
-            try {
-                $photoFile->move(
-                    $this->getParameter('photos_directory'),
-                    $photoFileName
-                );
-                $produit->setPhoto($photoFileName);
-            } catch (FileException $e) {
-                // handle exception
-            }
+
+
+
+    #[Route('/{id}', name: 'app_produit_show', methods: ['GET'])]
+    public function show(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $produit=$entityManager->getRepository(Produit::class)
+            ->find($id);
+        return $this->render('produit/show.html.twig', [
+            'produit' => $produit,
+        ]);
+    }
+    #[Route('/{id}', name: 'app_produit_delete', methods: ['POST'])]
+    public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $produit=$entityManager->getRepository(Produit::class)
+            ->find($id);
+        if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($produit);
+            $entityManager->flush();
         }
-        
-        $entityManager->persist($produit);
-        $entityManager->flush();
 
         return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    return $this->renderForm('produit/new.html.twig', [
-        'produit' => $produit,
-        'form' => $form,
-    ]);
-}
-
-
-    #[Route('/{id}panier', name: 'app_produit_show1', methods: ['GET'])]
-    public function show1(Produit $produit): Response
+    #[Route('/produit/{id}', name: 'app_produit_show3', methods: ['GET'])]
+    public function show3(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
+        $produit = $entityManager->getRepository(Produit::class)->find($id);
+
+        return $this->render('produit/show3.html.twig', [
+            'produit' => $produit,
+        ]);
+    }
+    #[Route('/{id}/panier', name: 'app_produit_show1', methods: ['GET'])]
+    public function show1(int $id, EntityManagerInterface $entityManager): Response
+    {
+        $produit = $entityManager->getRepository(Produit::class)->find($id);
         return $this->render('produit/show1.html.twig', [
             'produit' => $produit,
         ]);
     }
 
-    #[Route('/{id}', name: 'app_produit_show', methods: ['GET'])]
-    public function show(Produit $produit): Response
-    {
-        return $this->render('produit/show.html.twig', [
-            'produit' => $produit,
-        ]);
-    }
-
-
-
 
 
     #[Route('/{id}/edit', name: 'app_produit_edit', methods: ['GET', 'POST'])]
-    /*public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
+        $produit = $entityManager->getRepository(Produit::class)->find($id);
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // handle photo file upload
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $photoFileName = uniqid().'.'.$photoFile->guessExtension();
+                try {
+                    $photoFile->move(
+                        $this->getParameter('photos_directory_produit'),
+                        $photoFileName
+                    );
+                    $produit->setPhoto($photoFileName);
+                } catch (FileException $e) {
+                    // handle exception
+                }
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
@@ -235,49 +244,9 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
             'produit' => $produit,
             'form' => $form,
         ]);
-    }*/
-    public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
-{
-    $form = $this->createForm(ProduitType::class, $produit);
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        // handle photo file upload
-        $photoFile = $form->get('photo')->getData();
-        if ($photoFile) {
-            $photoFileName = uniqid().'.'.$photoFile->guessExtension();
-            try {
-                $photoFile->move(
-                    $this->getParameter('photos_directory'),
-                    $photoFileName
-                );
-                $produit->setPhoto($photoFileName);
-            } catch (FileException $e) {
-                // handle exception
-            }
-        }
-
-        $entityManager->flush();
-
-        return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    return $this->renderForm('produit/edit.html.twig', [
-        'produit' => $produit,
-        'form' => $form,
-        ]);
-        }
 
-    #[Route('/{id}', name: 'app_produit_delete', methods: ['POST'])]
-    public function delete(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($produit);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
-    }
 
 
 
@@ -302,6 +271,6 @@ public function show3(Request $request, EntityManagerInterface $entityManager, i
         }
         return $realEntities;
     }
-    
+
 
 }
