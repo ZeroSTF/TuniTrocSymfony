@@ -32,7 +32,7 @@
         </table>
 
         {% if produit.iduser != app.user.id %}
-        <a href="{{ path('app_mesproduit_index') }}" class="btn btn-primary">Échanger</a>
+        <a href="{{ path('app_mesproduit_index', { 'p1': produit.id }) }}" class="btn btn-primary">Échanger</a>
         {% endif %}
         <a href="{{ path('app_produit_index2') }}" class="btn btn-secondary">Retour à la liste</a>
     </div>

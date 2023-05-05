@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Panier;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use Dompdf\Dompdf;
@@ -39,8 +40,8 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/mesproduits', name: 'app_mesproduit_index', methods: ['GET'])]
-    public function index3(Request $request,EntityManagerInterface $entityManager, Security $security): Response
+    #[Route('/mesproduits/{p1}', name: 'app_mesproduit_index', methods: ['GET'])]
+    public function index3(Request $request,EntityManagerInterface $entityManager, Security $security, int $p1): Response
     {
         $user = $security->getUser();
         $produits = $entityManager
@@ -48,16 +49,25 @@ class ProduitController extends AbstractController
             ->findBy(['idUser' => $user]);
         return $this->render('produit/index3.html.twig', [
             'produits' => $produits,
+            'p1' => $p1
         ]);
     }
 
-    #[Route('/confirmer-echange', name: 'app_confirmer_echange', methods: ['POST'])]
-    public function confirmerEchange(SessionInterface $session): Response
+    #[Route('/confirmer-echange/{p1}/{p2}', name: 'app_confirmer_echange', methods: ['GET', 'POST'])]
+    public function confirmerEchange(SessionInterface $session, int $p1, int $p2, EntityManagerInterface $entityManager): Response
     {
-        // Effectuer les actions nécessaires pour confirmer l'échange
+        $prod1= $entityManager->getRepository(Produit::class)->find($p1);
+        $prod2 = $entityManager->getRepository(Produit::class)->find($p2);
+        $panier=new Panier();
+        $panier->setProduitR($prod1);
+        $panier->setProduitS($prod2);
+        $panier->setDate(new \DateTime());
+        $panier->setTransporteurb(false);
+        $entityManager->persist($panier);
+        $entityManager->flush();
 
         // Afficher la notification
-        $session->getFlashBag()->add('success', 'L\'échange a été confirmé avec succès !');
+        $session->getFlashBag()->add('success', 'La demande d\'échange a été envoyée avec succès !');
 
         // Rediriger vers la page index2.html.twig
         return $this->redirectToRoute('app_produit_index2');
@@ -192,13 +202,14 @@ class ProduitController extends AbstractController
         return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/produit/{id}', name: 'app_produit_show3', methods: ['GET'])]
-    public function show3(Request $request, EntityManagerInterface $entityManager, int $id): Response
+    #[Route('produit/{p1}/{p2}', name: 'app_produit_show3', methods: ['GET'])]
+    public function show3(Request $request, EntityManagerInterface $entityManager, int $p1,int $p2): Response
     {
-        $produit = $entityManager->getRepository(Produit::class)->find($id);
 
-        return $this->render('produit/show3.html.twig', [
-            'produit' => $produit,
+
+        return $this->redirectToRoute('app_confirmer_echange', [
+            'p1' => $p1,
+            'p2' => $p2,
         ]);
     }
     #[Route('/{id}/panier', name: 'app_produit_show1', methods: ['GET'])]
