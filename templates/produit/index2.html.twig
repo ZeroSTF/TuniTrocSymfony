@@ -19,24 +19,33 @@
         <button type="submit" class="btn btn-primary">Rechercher</button>
       </form>
 
-      <h1>Dernières annonces:</h1>
-      <div class="row">
-          {% for produit in produits %}
-              <div class="col-md-4 mb-4">
-                  <div class="card">
-                      <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 300px">
-                      <div class="card-body">
-                          <h5 class="card-title">{{ produit.nom }}</h5>
-                          <p class="card-text">{{ produit.categorie }} - {{ produit.libelle }}</p>
-                          {% if app.user %}
-                          <a href="{{ path('app_produit_show1', {'id': produit.id}) }}" class="btn btn-primary">Voir le produit</a>
+        <h1>Dernières annonces:</h1>
+
+        <div class="row">
+            {% for produit in produits %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 300px">
+                        <div class="card-body">
+                            {% if produit.user and produit.user.photo %}
+                                <a href="{{ path('app_user_profile', {'id': produit.user.id}) }}">
+                                    <img src="{{ asset('uploads/users/' ~ produit.user.photo) }}" class="img-fluid rounded-circle" style="width:50px; height:50px;">
+                                    {{ produit.user.prenom }} {{ produit.user.nom }}
+                                </a><br>
+                            {% endif %}
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="card-text">{{ produit.categorie }} - {{ produit.libelle }}</p>
+
+                            {% if app.user %}
+                                <a href="{{ path('app_produit_show1', {'id': produit.id}) }}" class="btn btn-primary">Voir le produit</a>
                             {% else %}
                                 <a href="{{ path('app_login') }}" class="btn btn-primary">Voir le produit</a>
-                                {% endif %}
-                      </div>
-                  </div>
-              </div>
-          {% endfor %}
-      </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
     </div>
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'template.html.twig' %}
+
+
+{% block body %}
+    <h1>Edit Fidelite</h1>
+
+    {{ include('fidelite/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_fidelite_index') }}">back to list</a>
+
+    {{ include('fidelite/_delete_form.html.twig') }}
+{% endblock %}

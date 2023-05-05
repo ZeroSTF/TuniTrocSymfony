@@ -1,0 +1,5 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     C:\wkhtmltopdf\bin\wkhtmltopdf.exe   # path to the wkhtmltopdf binary on your system
+        options:    []

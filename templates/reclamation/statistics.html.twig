@@ -1,0 +1,61 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+<div class="card" style="width: 800px; height: 800px;">
+
+        <div class="card-header">
+            <h3 class="card-title">Reclamations par mois</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="chart" width="400" height="400"></canvas>
+        </div>
+        <a href="{{ path('app_reclamation_index') }}" class="btn btn-default">Retour à la liste</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script>
+    const data = {{ data|json_encode|raw }};
+    const ctx = document.getElementById('chart').getContext('2d');
+    console.log(data);
+
+    // Group the data by month
+    const groupedData = {};
+    data.forEach(row => {
+        const month = moment(row.label, 'YYYY-MM').format('MMM YYYY');
+        if (!groupedData[month]) {
+            groupedData[month] = 0;
+        }
+        groupedData[month] += row.value;
+    });
+
+    // Create arrays of labels and data values from the groupedData object
+    const labels = Object.keys(groupedData);
+    const values = Object.values(groupedData);
+    // Create the chart
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Nombre de reclamations par mois',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'template.html.twig' %}
+
+
+{% block body %}
+    <h1>Create new Fidelite</h1>
+
+    {{ include('fidelite/_form.html.twig') }}
+
+    <a href="{{ path('app_fidelite_index') }}">back to list</a>
+{% endblock %}

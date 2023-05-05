@@ -1,0 +1,20 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <h1>Mes réclamations:</h1>
+        <div class="row">
+            {% for reclamation in reclamations %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img class="card-img-top" src="{{ reclamation.photo }}" alt="Pas de photo">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ reclamation.idUsers.prenom  }} {{ reclamation.idUsers.nom  }} sur {{ reclamation.idUserr.prenom  }} {{ reclamation.idUserr.nom  }}</h5>
+                            <a href="{{ path('app_reclamation_show1', {'id': reclamation.id}) }}" class="btn btn-primary">Voir la réclamation</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

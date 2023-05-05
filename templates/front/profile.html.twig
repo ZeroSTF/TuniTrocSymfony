@@ -12,6 +12,11 @@
                                                alt="User Photo">
                     {% if user == app.user %}
                     <a href="{{ path('app_edit_profile', {'id': app.user.id}) }}" class="btn btn-light btn-sm btn-block">Edit profile</a></div>
+                {% else %}
+                    <a class="btn btn-light btn-sm btn-block" href="{{path('app_reclamer', {'id': user.id})}}">
+                        <i class="fas fa-exclamation-circle"></i> Déposer une réclamation
+                    </a>
+
                 {% endif %}
                 <div class="media-body mb-5 text-white">
                     <h4 class="mt-0 mb-0">{{ user.prenom }} {{ user.nom }}</h4>

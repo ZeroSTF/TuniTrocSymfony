@@ -1,0 +1,63 @@
+{% extends 'template.html.twig' %}
+
+
+{% block body %}
+    <h1>Reclamation index</h1>
+    <form method="get" action="{{ path('app_reclamation_search') }}">
+    <label for="date">Search by date:</label>
+    <input type="datetime-local" id="date" name="date" value="{{ app.request.query.get('date') ? app.request.query.get('date')|date('Y-m-d\TH:i:s') : '' }}" />
+
+    <button type="submit">Search</button>
+</form>
+
+
+    {% if date %}
+    <p>Showing reclamations before {{ date|date('Y-m-d H:i:s') }}.</p>
+    <a href="{{ path('app_reclamation_index') }}">Reset search</a>
+{% endif %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Cause</th>
+                <th>Traitée</th>
+                <th>Photo</th>
+                <th>Date</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reclamation in reclamations %}
+            <tr>
+                <td>{{ reclamation.id }}</td>
+                <td>{{ reclamation.cause }}</td>
+                <td>{{ reclamation.etat ? 'Yes' : 'No' }}</td>
+                <td>
+                                                {% if reclamation.photo %}
+                                                    <img src="{{ asset('uploads/reclamations/' ~ reclamation.photo) }}" alt="photo"
+                                                         width="100">
+                                                {% else %}
+                                                    No photo
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ reclamation.date|date('Y-m-d H:i:s') }}</td>
+                <td>
+                
+
+                    <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}"  class="fas fa-eye">show</a>
+                    <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}"   class="fas fa-edit">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reclamation_new') }}" class="btn btn-primary">Create new</a>
+    <a href="{{ path('app_reclamation_statistics') }}" class="btn btn-primary">Statistiques</a>
+   <a href="{{ path('app_reclamation_pdf') }}" target="_blank" class="btn btn-primary">Export to PDF</a>
+
+{% endblock %}

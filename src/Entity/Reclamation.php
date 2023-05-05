@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ReclamationRepository;
+
 
 /**
  * Reclamation
  *
- * @ORM\Table(name="reclamation", indexes={@ORM\Index(name="userS_reclamation", columns={"id_userS"}), @ORM\Index(name="userR", columns={"id_userR"})})
+ * @ORM\Table(name="reclamation", indexes={@ORM\Index(name="userR", columns={"id_userR"}), @ORM\Index(name="userS_reclamation", columns={"id_userS"})})
  * @ORM\Entity
  */
 class Reclamation
@@ -54,6 +56,46 @@ class Reclamation
      * })
      */
     private $idUsers;
+
+    /**
+ * @var string|null
+ *
+ * @ORM\Column(name="photo", type="string", length=255, nullable=true)
+ */
+private $photo;
+
+/**
+ * @var \DateTime
+ *
+ * @ORM\Column(name="date", type="datetime", nullable=false)
+ */
+private $date;
+
+
+public function getDate(): ?\DateTime
+{
+    return $this->date;
+}
+
+public function setDate(\DateTime $date): self
+{
+    $this->date = $date;
+
+    return $this;
+}
+
+
+public function getPhoto(): ?string
+{
+    return $this->photo;
+}
+
+public function setPhoto(?string $photo): self
+{
+    $this->photo = $photo;
+
+    return $this;
+}
 
     public function getId(): ?int
     {
