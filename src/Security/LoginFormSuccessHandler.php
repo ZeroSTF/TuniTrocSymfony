@@ -30,6 +30,6 @@ class LoginFormSuccessHandler implements AuthenticationSuccessHandlerInterface
         }
 
         // redirect to the default page for other users
-        return new RedirectResponse($this->router->generate('app_front'));
+        return new RedirectResponse($this->router->generate('app_produit_index2'));
     }
 }
