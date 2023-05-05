@@ -12,16 +12,16 @@
           <p>Vitesse de l'air : {{ weather_data.wind.speed }} m/s</p>
       {% endif %}
 
-      <form action="{{ path('search') }}" method="GET">
-        <div class="form-group">
-          <input type="text" class="form-control" name="query" placeholder="Rechercher un produit...">
-        </div>
-        <button type="submit" class="btn btn-primary">Rechercher</button>
-      </form>
+
 
         <h1>Dernières annonces:</h1>
-
-        <div class="row">
+        <form id="search-form">
+            <div class="form-group">
+                <label for="search-input">Rechercher un produit :</label>
+                <input type="text" class="form-control" id="search-input" name="search" placeholder="Entrez un mot-clé">
+            </div>
+        </form>
+        <div class="row" id="products-container">
             {% for produit in produits %}
                 <div class="col-md-4 mb-4">
                     <div class="card">
@@ -29,7 +29,7 @@
                         <div class="card-body">
                             {% if produit.user and produit.user.photo %}
                                 <a href="{{ path('app_user_profile', {'id': produit.user.id}) }}">
-                                    <img src="{{ asset('uploads/users/' ~ produit.user.photo) }}" class="img-fluid rounded-circle" style="width:50px; height:50px;">
+                                    <img src="{{ asset('uploads/users/' ~ produit.user.photo) }}" class="img-fluid rounded-circle" style="width:50px; height:50px;" alt="">
                                     {{ produit.user.prenom }} {{ produit.user.nom }}
                                 </a><br>
                             {% endif %}
@@ -48,4 +48,25 @@
         </div>
 
     </div>
+    <script>
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const productsContainer = document.getElementById('products-container');
+
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const products = productsContainer.getElementsByClassName('product');
+
+            Array.from(products).forEach(product => {
+                const title = product.getElementsByClassName('card-title')[0].innerText.toLowerCase();
+                const category = product.getElementsByClassName('card-text')[0].innerText.toLowerCase();
+
+                if (title.includes(searchTerm) || category.includes(searchTerm)) {
+                    product.style.display = '';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        });
+    </script>
 {% endblock %}

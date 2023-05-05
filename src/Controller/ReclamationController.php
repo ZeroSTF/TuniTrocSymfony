@@ -157,6 +157,14 @@ public function statistics(EntityManagerInterface $entityManager): Response
         ]);
     }
 
+    #[Route('/{id}', name: 'app_reclamation_show1', methods: ['GET'])]
+    public function show1(Reclamation $reclamation): Response
+    {
+        return $this->render('reclamation/show.html.twig', [
+            'reclamation' => $reclamation,
+        ]);
+    }
+
     #[Route('/{id}/edit', name: 'app_reclamation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
     {
