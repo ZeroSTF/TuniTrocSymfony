@@ -3,8 +3,43 @@
 {% block body %}
 
 <title>Transporteurs </title> 
+<style>
+    .search-form {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
 
-  <h1>Liste des Transporteurs</h1>
+    .search-label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .search-input {
+        padding: 5px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .search-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .search-button:hover {
+        background-color: #45a049;
+    }
+</style>
+<h1>Liste des Transporteurs</h1>
+<form class="search-form" method="get" action="{{ path('app_transporteur_search') }}">
+    <input class="search-input" type="text" id="searchTerm" name="searchTerm" value="{{ app.request.query.get('searchTerm') }}" />
+</form>
 <a href="{{ path('add_transporteur') }}" class="btn btn-sm btn-primary add-button">
    Ajouter <i class="fa-duotone fa-plus"></i>
 </a>
@@ -13,6 +48,11 @@
   margin-left: 700px;
   margin-right: 0;
   float: right;
+}
+
+.table img {
+  max-width: 100%;
+  height: auto;
 }
 
 </style>
@@ -34,7 +74,8 @@
         {% for transporteur in transporteurs %}
             <tr>
                 <td>{{ transporteur.id }}</td>  
-                <td> {{transporteur.photo}} 
+                <td> <img src="{{ asset('uploads/produits/' ~ transporteur.photo) }}"
+             alt="" height="60" width="60"> </td>
                 <td>{{ transporteur.nom }}</td>
                 <td>{{ transporteur.prenom }}</td>
                 <td>{{ transporteur.numTel }}</td>

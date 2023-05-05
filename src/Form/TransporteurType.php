@@ -6,6 +6,9 @@ use App\Entity\Transporteur;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+
 
 class TransporteurType extends AbstractType
 {
@@ -15,8 +18,23 @@ class TransporteurType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('numTel')
-            ->add('photo')
-        ;
+            ->add('photo', FileType::class, [
+                'label' => 'Photo (fichier JPG ou PNG)',
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image JPG ou PNG valide.',
+                    ])
+                ],
+                'data_class' => null,
+
+            ])        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

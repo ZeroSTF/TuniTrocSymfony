@@ -46,7 +46,7 @@ class Transporteur
     /**
      * @var string
      *
-     * @ORM\Column(name="photo", type="blob", length=16777215, nullable=false)
+     * @ORM\Column(name="photo", type="string", length=255, nullable=false)
      */
     private $photo;
 

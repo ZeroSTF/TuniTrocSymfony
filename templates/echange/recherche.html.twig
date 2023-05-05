@@ -2,23 +2,14 @@
 
 {% block body %}
 
-<title>Echanges</title> 
+<title>Recherche des Echanges</title> 
 
-<h1 >Liste des Echanges</h1>
-<form style="float:left; margin:0 20px;" method="get" action="{{ path('app_echange_filtrer') }}">
-    <label for="etat">Filtrer par état:</label>
-    <select name="etat" id="etat">
-        <option value="">Tous</option>
-        <option value="livré" {% if app.request.query.get('etat') == 'livré' %}selected{% endif %}>Livré</option>
-        <option value="confirmed" {% if app.request.query.get('etat') == 'confirmed' %}selected{% endif %}>Confirmé</option>
-        <option value="Annulé" {% if app.request.query.get('etat') == 'Annulé' %}selected{% endif %}>Annulé</option>
-        <option value="En cours de livraison" {% if app.request.query.get('etat') == 'En cours de livraison' %}selected{% endif %}>En cours de livraison</option>
-    </select>
-    <button type="submit">Filter</button>
-</form>
-<a href="{{ path('chart') }}" style="float:right; margin-left: 350px;" class="btn btn-primary"><i class="bi bi-eye"></i> Générer stat</a>
 
- 
+<h1>Liste des Echanges</h1>
+
+
+
+
 <table class="table">
     <thead>
         <tr>
@@ -58,14 +49,13 @@
             <td>
                 <form method="POST" action="{{ path('update_echange', {'id': echange.id}) }}">
                     <div class="form-group">
-    <label for="transporteur">Transporteur:</label>
-    <select class="form-control" id="transporteur" name="transporteur">
-         {% for transporteur in transporteurs %}
-          <option value="{{ transporteur.id }}" {% if echange.idTransporteur and echange.idTransporteur.getId() == transporteur.id %}selected{% endif %}>{{ transporteur.id }}</option>
+                        <label for="transporteur">Transporteur:</label>
+                        <select name="transporteur" id="transporteur" class="form-control">
+                            {% for transporteur in transporteurs %}
+                                <option value="{{ transporteur.id }}" {% if echange.idTransporteur and echange.idTransporteur.getId() == transporteur.id %}selected{% endif %}>{{ transporteur.id }}</option>
                             {% endfor %}
-    </select>
-</div>
-
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-sm btn-primary">
                         <i class="fa-solid fa-file-pen"></i> Assigner
                     </button>
