@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/users'
+    photos_directory_produit: '%kernel.project_dir%/public/uploads/produits'
 
 services:
     Endroid\QrCode\Writer\PngWriter: '@endroid.qrcode.writer.png'
@@ -37,7 +38,6 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

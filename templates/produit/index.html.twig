@@ -32,7 +32,8 @@
                     <td>{{ produit.categorie }}</td>
                     <td>{{ produit.nom }}</td>
                     <td>{{ produit.libelle }}</td>
-                    <td><img src="{{ asset('uploads/' ~ produit.photo) }}" alt="{{ produit.photo }}" class="img-thumbnail"></td>
+                    <td><img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 100px"></td>
+                  
                     <td>{{ produit.ville }}</td>
                     <td>{{ produit.idUser }}</td>
                     <td>
@@ -48,6 +49,9 @@
             {% endfor %}
             </tbody>
         </table>
+        <a href="{{ path('generate_csv') }}" target="_blank">Générer le fichier CSV</a>
+        
+                    <a href="{{ path('generate_pdf') }}" target="_blank">Générer le PDF</a><br>
     </div>
 
     <a href="{{ path('app_produit_new') }}" class="btn btn-primary float-right mb-3">Ajouter un produit</a>

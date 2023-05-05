@@ -2,20 +2,37 @@
 
 {% block body %}
     <div class="container">
-        <h1>Dernières annonces:</h1>
-        <div class="row">
-            {% for produit in produits %}
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img class="card-img-top" src="{{ produit.photo }}" alt="{{ produit.nom }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ produit.nom }}</h5>
-                            <p class="card-text">{{ produit.categorie }} - {{ produit.libelle }}</p>
-                            <a href="{{ path('app_produit_show1', {'id': produit.id}) }}" class="btn btn-primary">Voir le produit</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+      {% if weather_data.weather[0].icon is defined %}
+          <img src="{{ 'https://openweathermap.org/img/w/' ~ weather_data.weather[0].icon ~ '.png' }}" alt="Weather Icon">
+      {% endif %}
+      
+      <p>Température à  tunis: {{ weather_data.main.temp  }} °C</p>
+
+      {% if weather_data.wind.speed is defined %}
+          <p>Vitesse de l'air : {{ weather_data.wind.speed }} m/s</p>
+      {% endif %}
+
+      <form action="{{ path('search') }}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" name="query" placeholder="Rechercher un produit...">
         </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+      </form>
+
+      <h1>Dernières annonces:</h1>
+      <div class="row">
+          {% for produit in produits %}
+              <div class="col-md-4 mb-4">
+                  <div class="card">
+                      <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 300px">
+                      <div class="card-body">
+                          <h5 class="card-title">{{ produit.nom }}</h5>
+                          <p class="card-text">{{ produit.categorie }} - {{ produit.libelle }}</p>
+                          <a href="{{ path('app_produit_show1', {'id': produit.id}) }}" class="btn btn-primary">Voir le produit</a>
+                      </div>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
     </div>
 {% endblock %}
