@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class UserJSONController extends abstractcontroller
 {
-    #[Route('json/displayappointment', name: 'afficherUser', methods: ['GET', 'POST'])]
+    #[Route('json/afficherUser', name: 'afficherUser', methods: ['GET', 'POST'])]
     public function indexUser(EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
     {
         $users = $entityManager
