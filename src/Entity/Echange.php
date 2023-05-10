@@ -2,6 +2,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Echange
@@ -18,6 +19,8 @@ class Echange
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    
+    #[Groups("echanges")]
     private $id;
 
     /**
@@ -25,6 +28,8 @@ class Echange
      *
      * @ORM\Column(name="etat", type="string", length=255, nullable=true, options={"default"="NULL"})
      */
+    #[Groups("echanges")]
+
     private $etat = 'NULL';
     
     /**
@@ -32,6 +37,8 @@ class Echange
      *
      * @ORM\Column(name="location", type="string", length=255, nullable=true, options={"default"="NULL"})
      */
+    #[Groups("echanges")]
+
     private $location = 'NULL';
     
     /**
@@ -42,6 +49,8 @@ class Echange
      *   @ORM\JoinColumn(name="id_panier", referencedColumnName="id")
      * })
      */
+    #[Groups("echanges")]
+
     private $idPanier;
 
     /**
@@ -52,12 +61,16 @@ class Echange
      *   @ORM\JoinColumn(name="id_transporteur", referencedColumnName="id")
      * })
      */
+    #[Groups("echanges")]
+
     private $idTransporteur;
 /**
  * @var \DateTime
  *
  * @ORM\Column(name="createdAt", type="datetime", nullable=false, options={"default"="CURRENT_TIMESTAMP"})
  */
+#[Groups("echanges")]
+
 private $createdAt;
 
     

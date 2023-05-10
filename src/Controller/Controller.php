@@ -12,7 +12,7 @@ class FrontController extends AbstractController
      *  #[Route('/', name: 'display_transport')]
 
      */
-    #[Route('/admin', name: 'app_back')]
+    #[Route('/', name: 'app_back')]
     public function index(): Response
     {
         return $this->render('front/index.html.twig', [

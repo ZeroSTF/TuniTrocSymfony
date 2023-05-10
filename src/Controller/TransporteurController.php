@@ -18,6 +18,7 @@ use App\Entity\Echange;
 use App\Form\EchangeType;
 use App\Repository\EchangeRepository;
 use Endroid\QrCode\QrCode;
+use Symfony\Component\Serializer\SerializerInterface;
 
 
 
@@ -68,16 +69,14 @@ public function indexF(): Response
     {
         $transporteur = $doctrine->getRepository(Transporteur::class)->find($id);
 
-        $livredEchangesCount = $echangeRepository->countEchangesByState('livré');
-        $totalAmount = $livredEchangesCount * 7;
+       
 
         $echanges = $doctrine->getRepository(Echange::class)->findBy(['idTransporteur' => $id]);
 
         return $this->render('transporteur/show.html.twig', [
             'transporteur' => $transporteur,
             'echanges' => $echanges,
-            'totalAmount' => $totalAmount,
-            'livredEchangesCount' => $livredEchangesCount,
+           
         ]);
     }
     #[Route('/update/{id}', name: 'update_trechange')]
@@ -222,4 +221,74 @@ public function indexF(): Response
         ]);
     }
     
+/////////////////////////JSON
+#[Route("/AllTransporteurs", name:"list")]
+public function getTransporteur(EntityManagerInterface $entityManager, SerializerInterface $serializer)
+{
+    $transporteurs = $entityManager
+    ->getRepository(Transporteur::class)
+    ->findAll();
+
+        $json = $serializer->serialize($transporteurs, 'json', ['groups' => "transporteurs"]);
+
+    return new Response($json);
+}
+#[Route("/getTransporteur/{id}", name:"transporteur")]
+public function EchangeId(EntityManagerInterface $entityManager,$id, SerializerInterface $serializer)
+{
+    $echange = $entityManager
+    ->getRepository(Transporteur::class)
+    ->find($id);
+
+        $json = $serializer->serialize($echange, 'json', ['groups' => "transporteurs"]);
+
+    return new Response($json);
+}
+#[Route("/addTransporteurJSON/new", name:"addTransporteurJSON")]
+public function addTransporteurJSON(Request $req,ManagerRegistry $doctrine,EntityManagerInterface $entityManager, SerializerInterface $serializer)
+{
+    $em = $doctrine->getManager();
+    $transporteur = new Transporteur();
+    $transporteur->setNom($req->get('nom'));
+    $transporteur->setPrenom($req->get('prenom'));
+    $transporteur->setNumTel($req->get('numTel'));
+    $transporteur->setPhoto($req->get('photo'));
+
+    $em->persist($transporteur);
+    $em->flush();
+
+    $json = $serializer->serialize($transporteur, 'json', ['groups' => "transporteurs"]);
+return new Response("Transporteur ajouté avec succées" . json_encode($json));
+}
+
+#[Route("/updateTransporteurJSON/{id}", name:"updateTransporteurJSON")]
+public function updateTransporteurJSON(Request $req,ManagerRegistry $doctrine,EntityManagerInterface $em, SerializerInterface $serializer,$id)
+{
+    $transporteur = $em
+    ->getRepository(Transporteur::class)
+    ->find($id);
+    $transporteur->setNom($req->get('nom'));
+    $transporteur->setPrenom($req->get('prenom'));
+    $transporteur->setNumTel($req->get('numTel'));
+    $transporteur->setPhoto($req->get('photo'));
+
+    $em->flush();
+
+    $json = $serializer->serialize($transporteur, 'json', ['groups' => "transporteurs"]);
+return new Response("Transporteur mis à jour avec succés " . json_encode($json));
+}
+#[Route("/deleteTransporteurJSON/{id}", name:"deleteTransporteurJSON")]
+public function deleteTransporteurJSON(Request $req,ManagerRegistry $doctrine,EntityManagerInterface $em, SerializerInterface $serializer,$id)
+{
+    $transporteur = $em
+    ->getRepository(Transporteur::class)
+    ->find($id);
+   $em->remove($transporteur);
+
+    $em->flush();
+
+    $json = $serializer->serialize($transporteur, 'json', ['groups' => "transporteurs"]);
+return new Response("transporteur supprimé avec succés " . json_encode($json));
+}
+
 }

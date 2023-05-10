@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Echange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 class EchangeRepository extends ServiceEntityRepository
 {
@@ -13,13 +15,5 @@ class EchangeRepository extends ServiceEntityRepository
         parent::__construct($registry, Echange::class);
     }
     
-    public function countEchangesByState(string $state): int
-    {
-        $qb = $this->createQueryBuilder('e')
-            ->select('COUNT(e)')
-            ->where('e.etat = :etat')
-            ->setParameter('etat', $state);
-
-        return $qb->getQuery()->getSingleScalarResult();
-    }
+   
 }

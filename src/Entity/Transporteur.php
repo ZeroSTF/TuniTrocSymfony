@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * Transporteur
@@ -20,6 +22,8 @@ class Transporteur
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
+    #[Groups("transporteurs")]
+
     private $id;
 
     /**
@@ -27,6 +31,8 @@ class Transporteur
      *
      * @ORM\Column(name="nom", type="string", length=255, nullable=false)
      */
+    #[Groups("transporteurs")]
+
     private $nom;
 
     /**
@@ -34,6 +40,8 @@ class Transporteur
      *
      * @ORM\Column(name="prenom", type="string", length=255, nullable=false)
      */
+    #[Groups("transporteurs")]
+
     private $prenom;
 
     /**
@@ -41,6 +49,8 @@ class Transporteur
      *
      * @ORM\Column(name="num_tel", type="integer", nullable=false)
      */
+    #[Groups("transporteurs")]
+
     private $numTel;
 
     /**
@@ -48,6 +58,8 @@ class Transporteur
      *
      * @ORM\Column(name="photo", type="string", length=255, nullable=false)
      */
+    #[Groups("transporteurs")]
+
     private $photo;
 
     
