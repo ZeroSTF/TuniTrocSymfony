@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class JSONController extends abstractcontroller
+class UserJSONController extends abstractcontroller
 {
     #[Route('json/displayappointment', name: 'afficherUser', methods: ['GET', 'POST'])]
     public function indexUser(EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
