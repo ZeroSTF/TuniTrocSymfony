@@ -26,19 +26,20 @@ class UserJSONController extends abstractcontroller
         return new JsonResponse(json_decode($json));
     }
 
-    #[Route('json/ajouterUser', name: 'ajouterUser', methods: ['GET', 'POST'])]
+    #[Route('json/ajouterUser', name: 'ajouterUser', methods: ['POST'])]
     public function addUser(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $user = new User();
 
-        $user->setSalt("");
+        // Set user properties
+        $user->setSalt('');
         $user->setPwd(
             $userPasswordHasher->hashPassword(
                 $user,
                 $request->get('pwd')
             )
         );
-        $user->setPhoto('photo');
+        $user->setPhoto($request->get('photo'));
         $user->setDate(new \DateTime());
         $user->setEmail($request->get('email'));
         $user->setNom($request->get('nom'));
@@ -46,13 +47,7 @@ class UserJSONController extends abstractcontroller
         $user->setNumTel($request->get('numTel'));
         $user->setVille($request->get('ville'));
         $user->setValeurFidelite($request->get('valeurFidelite'));
-        $role = $request->get('role');
-
-        if ($role === "Admin") {
-            $user->setRole(true);
-        } else {
-            $user->setRole(false);
-        }
+        $user->setRole($request->get('role') === 'Admin');
         $user->setEtat($request->get('etat'));
 
         $entityManager->persist($user);
@@ -62,11 +57,19 @@ class UserJSONController extends abstractcontroller
         return new JsonResponse(json_decode($json));
     }
 
-    #[Route('json/modifierUser', name: 'modifierUser', methods: ['GET', 'POST'])]
+
+    #[Route('json/modifierUser', name: 'modifierUser', methods: ['POST'])]
     public function editUser(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->find($request->get('id'));
-        $user->setSalt("");
+        $userId = $request->get('id');
+        $user = $entityManager->getRepository(User::class)->find($userId);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Update user properties
+        $user->setSalt('');
         $user->setPwd(
             $userPasswordHasher->hashPassword(
                 $user,
@@ -82,16 +85,31 @@ class UserJSONController extends abstractcontroller
         $user->setVille($request->get('ville'));
         $user->setValeurFidelite($request->get('valeurFidelite'));
         $role = $request->get('role');
-
-        if ($role === "Admin") {
-            $user->setRole(true);
-        } else {
-            $user->setRole(false);
-        }
+        $user->setRole($role === 'Admin');
         $user->setEtat($request->get('etat'));
+
         $entityManager->flush();
 
         $json = $serializer->serialize($user, 'json');
         return new JsonResponse(json_decode($json));
     }
+
+
+    #[Route('json/suppUser', name: 'suppUser', methods: ['POST'])]
+    public function deleteUser(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        $userId = $request->get('id');
+        $user = $entityManager->getRepository(User::class)->find($userId);
+
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'User deleted successfully']);
+    }
+
+
 }
