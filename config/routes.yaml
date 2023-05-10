@@ -1,0 +1,19 @@
+index:
+    path: /
+    controller: 'App\Controller\FrontController::index1'
+
+app_logout:
+  path: /logout
+  methods: GET
+
+app_produit_pdf:
+    path: '/produit/{id}/pdf'
+    controller: 'App\Controller\ProduitController::pdfAction'
+    requirements:
+        id: '\d+'
+chart_data:
+    path: /chart-data
+    controller: App\Controller\ChartController::chartData
+chart:
+    path: /chart
+    controller: App\Controller\ChartController::chart

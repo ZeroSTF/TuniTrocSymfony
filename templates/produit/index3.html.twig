@@ -1,0 +1,22 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block body %}
+    <div class="container">
+      
+        <h1>Mes Produits:</h1>
+        <div class="row">
+            {% for produit in produits %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 300px">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ produit.nom }}</h5>
+                            <p class="card-text">{{ produit.categorie }} - {{ produit.libelle }}</p>
+                            <a href="{{ path('app_produit_show3', {'p1': p1, 'p2': produit.id}) }}" class="btn btn-primary">choisir</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'templatefront.html.twig' %}
+
+
+
+{% block body %}
+    <h1>Registration</h1>
+    {% for flash_message in app.flashes('success') %}
+    <div class="alert alert-success">{{ flash_message }}</div>
+{% endfor %}
+{% for flash_message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ flash_message }}</div>
+{% endfor %}
+    <form method="post" action="{{ path('app_register') }}" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="{{ registrationForm.email.vars.id }}">{{ registrationForm.email.vars.label }}</label>
+            {{ form_widget(registrationForm.email) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.nom.vars.id }}">{{ registrationForm.nom.vars.label }}</label>
+            {{ form_widget(registrationForm.nom) }}
+            {{ form_errors(registrationForm.nom) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.prenom.vars.id }}">{{ registrationForm.prenom.vars.label }}</label>
+            {{ form_widget(registrationForm.prenom) }}
+            {{ form_errors(registrationForm.prenom) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.numTel.vars.id }}">{{ registrationForm.numTel.vars.label }}</label>
+            {{ form_widget(registrationForm.numTel) }}
+            {{ form_errors(registrationForm.numTel) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.ville.vars.id }}">{{ registrationForm.ville.vars.label }}</label>
+            {{ form_widget(registrationForm.ville) }}
+            {{ form_errors(registrationForm.ville) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.photo.vars.id }}">{{ registrationForm.photo.vars.label }}</label>
+            {{ form_widget(registrationForm.photo) }}
+            {{ form_errors(registrationForm.photo) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.pwd.vars.id }}">{{ registrationForm.pwd.vars.label }}</label>
+            {{ form_widget(registrationForm.pwd) }}
+            {{ form_errors(registrationForm.pwd) }}
+        </div>
+        <div class="form-group">
+            <label for="{{ registrationForm.confirm_password.vars.id }}">{{ registrationForm.confirm_password.vars.label }}</label>
+            {{ form_widget(registrationForm.confirm_password) }}
+            {{ form_errors(registrationForm.confirm_password) }}
+        </div>
+        <div class="form-group">
+            {{ form_widget(registrationForm.agreeTerms) }}
+            <label for="{{ registrationForm.agreeTerms.vars.id }}">{{ registrationForm.agreeTerms.vars.label }}</label>
+            {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+{% endblock %}

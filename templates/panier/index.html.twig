@@ -1,0 +1,76 @@
+{% extends 'template.html.twig' %}
+
+
+
+{% block body %}
+
+    <title>Panier</title> 
+
+    <style>
+        /* Styles pour la table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background-color: #f2f2f2;
+        }
+
+        /* Styles pour les boutons */
+        .button {
+            display: inline-block;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            width: 70px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+
+    <h1>Panier</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Transporteur</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for panier in paniers %}
+                <tr>
+                    <td>{{ panier.id }}</td>
+                    <td>{{ panier.date ? panier.date|date('Y-m-d') : '' }}</td>
+                    <td>{{ panier.transporteurb ? 'Yes' : 'No' }}</td>
+                    <td>
+                        <a class="button" href="{{ path('app_panier_show', {'id': panier.id}) }}">Show</a>
+                        <a class="button" href="{{ path('app_panier_edit', {'id': panier.id}) }}">Edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">No records found</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="button" href="{{ path('app_panier_new') }}">Create new</a>
+    
+{% endblock %}

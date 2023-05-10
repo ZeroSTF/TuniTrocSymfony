@@ -1,0 +1,112 @@
+{% extends 'templatefront.html.twig' %}
+
+
+
+
+
+{% block body %}
+
+ 
+        <div class="hcontainer">
+        <div>
+<img src="data:image/jpeg;base64,{{ transporteur.photo }}" />
+<div style="text-align: center;">
+  <h2>Bienvenue de retour, cher {{transporteur.nom}}!  <i class="fa-solid fa-truck-fast fa-bounce" style="color: #0c47ac;"></i> </h2>
+  
+
+  </div>
+        <div class="container">
+
+<table class="table table-hover table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">ID de l'échange <i class="fa-solid fa-arrow-right-arrow-left fa-fade"></i></th>
+            <th scope="col">État de la livraison <i class="fa-solid fa-truck-ramp-box fa-fade"></i></th>
+            <th scope="col">Localisation <i class="fa-solid fa-location-dot fa-fade"></i></th>
+             <th scope="col">Code QR <i class="fa-solid fa-location-dot fa-fade"></i></th>
+
+            <th scope="col">Actions <i class="fa-solid fa-pen-to-square fa-fade"></i></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for echange in echanges %}
+            <tr>
+                <td>{{ echange.id }}</td>
+                <td>{{ echange.etat }}</td>
+                <td>{{ echange.location }}</td>
+                <td>
+                
+                <div class="d-flex justify-content-center">
+                <a href="{{ path('maps_echange', {'id': echange.id}) }}"class="btn btn-sm btn-primary me-2"><i class="fa-solid fa-map-location"></i></a>
+                </div></td>
+
+                <td>
+                    <div class="d-flex justify-content-center">
+                        <a href="{{ path('update_trechange', {'id': echange.id}) }}" class="btn btn-sm btn-primary me-2">
+                            <i class="fa-solid fa-file-pen"></i> Modifier
+                        </a>
+                        <form action="{{ path('delete_echange', {'id': echange.id}) }}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet échange?')">
+                                <i class="fa fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+<style>
+  /* Container for the form and table */
+ 
+.coming-soon {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background-color: #ffcc00;
+  color: #000;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+  border-radius: 5px;
+}
+
+
+
+  /* Make the table smaller */
+table {
+  font-size: 14px;
+}
+
+/* Position the table on the left side of the screen */
+
+
+/* Adjust the width of the table columns */
+th:first-child,
+td:first-child {
+  width: 20%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 60%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 20%;
+}
+
+</style>
+
+
+
+
+        {% block footer %}
+   <footer class="fixed-bottom bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+        </footer>
+{% endblock %}
+{% endblock %}

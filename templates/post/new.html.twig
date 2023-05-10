@@ -1,0 +1,30 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block title %}New Post{% endblock %}
+
+{% block body %}
+    <br><br>
+    <div  style="text-align: center !important;">
+        {{ form_start(form, {'attr': {'class': 'tm-contact-form mx-auto'}})}}
+
+            <div class="form-group">
+
+                {{ form_widget(form.description, { 'attr': {'class': 'form-control rounded-0','placeholder': 'Description'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+            <div class="form-group">
+                {{ form_widget(form.imageFile, { 'attr': {'class': 'form-control rounded-0','placeholder': 'image'}}) }}
+                {{ form_errors(form.imageFile) }}
+            </div>
+        <div class="form-group">
+            {{ form_widget(form.idCategorie, { 'attr': {'class': 'form-control rounded-0','placeholder': 'image'}}) }}
+            {{ form_errors(form.idCategorie) }}
+        </div>
+            <div class="form-group tm-text-right">
+                <button type="submit" class="btn btn-primary" formnovalidate>Send</button>
+            </div>
+        {{ form_end(form) }}
+
+    </div>
+
+{% endblock %}

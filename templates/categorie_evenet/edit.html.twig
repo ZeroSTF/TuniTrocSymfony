@@ -1,0 +1,14 @@
+{% extends 'admin.html.twig' %}
+
+{% block title %}Categorie{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form)}}
+
+    {{ form_widget(form.descrption, { 'attr': {'class':'form-control','placeholder': 'Type Categorie'}}) }}
+    {{ form_errors(form.descrption) }}
+    <button type="submit" class="btn btn-primary" style="text-align: center !important;"formnovalidate>Send</button>
+    {{ form_end(form)}}
+
+{% endblock %}

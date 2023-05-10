@@ -1,0 +1,41 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block body %}
+
+<title>Produit</title>
+<h1>{{ produit.nom }}</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 400px">
+    </div>
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Type</th>
+                    <td>{{ produit.type }}</td>
+                </tr>
+                <tr>
+                    <th>Catégorie</th>
+                    <td>{{ produit.categorie }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ produit.libelle }}</td>
+                </tr>
+                <tr>
+                    <th>Ville</th>
+                    <td>{{ produit.ville }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% if produit.iduser != app.user.id %}
+        <a href="{{ path('app_mesproduit_index', { 'p1': produit.id }) }}" class="btn btn-primary">Échanger</a>
+        {% endif %}
+        <a href="{{ path('app_produit_index2') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>
+
+{% endblock %}

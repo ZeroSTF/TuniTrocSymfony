@@ -1,0 +1,37 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block body %}
+
+
+<style>
+  .qa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    margin-top: 50px;
+  }
+  .qa form {
+    width: 100%;
+    max-width: 500px;
+  }
+   
+  
+</style>
+<div class="qa">
+    <h2>Avez-vous déjà livré les produits, {{ transporteur.nom }}?</h2>
+
+     {{ form(form) }}
+
+</div>
+{% block footer %}
+
+<footer class="fixed-bottom bg-dark">
+    <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+</footer>
+{% endblock %}
+{% endblock %}
+
+
+

@@ -1,0 +1,88 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+
+<title>Echanges</title> 
+
+<h1 >Liste des Echanges</h1>
+<form style="float:left; margin:0 20px;" method="get" action="{{ path('app_echange_filtrer') }}">
+    <label for="etat">Filtrer par état:</label>
+    <select name="etat" id="etat">
+        <option value="">Tous</option>
+        <option value="livré" {% if app.request.query.get('etat') == 'livré' %}selected{% endif %}>Livré</option>
+        <option value="confirmed" {% if app.request.query.get('etat') == 'confirmed' %}selected{% endif %}>Confirmé</option>
+        <option value="Annulé" {% if app.request.query.get('etat') == 'Annulé' %}selected{% endif %}>Annulé</option>
+        <option value="En cours de livraison" {% if app.request.query.get('etat') == 'En cours de livraison' %}selected{% endif %}>En cours de livraison</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+<a href="{{ path('chart') }}" style="float:right; margin-left: 350px;" class="btn btn-primary"><i class="bi bi-eye"></i> Générer stat</a>
+
+ 
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Créé le</th>
+            <th>Localisation</th>
+            <th>Nom et prenom du livreur</th>
+            <th>Etat</th>
+            <th>Assigner livreur</th>
+            <th>Supprimer</th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+    {% for echange in echanges %}
+        <tr>
+            <td>{{ echange.id }}</td>  
+            <td></td>
+            <td>{{ echange.location }}</td>
+            <td>
+              {% if echange.idTransporteur %}
+                {{ echange.getIdTransporteur().nom ~ ' ' ~ echange.getIdTransporteur().prenom }}
+              {% else %}
+                Aucun transporteur assigné
+              {% endif %}
+            </td>
+            <td>
+              {% if echange.etat == 'En cours de livraison' %}
+                <span class="text-warning"><i class="fas fa-hourglass-half"></i> En cours de livraison</span>
+              {% elseif echange.etat == 'livré' %}
+                <span class="text-success"><i class="fas fa-check-circle"></i> livré</span>
+              {% elseif echange.etat == 'Annulé' %}
+                <span class="text-danger"><i class="fas fa-times-circle"></i> Annulé</span>
+              {% elseif echange.etat == 'confirmed' %}
+                <span class="text-primary"><i class="fas fa-check"></i> Confirmé</span>
+              {% endif %}
+            </td>
+            <td>
+                <form method="POST" action="{{ path('update_echange', {'id': echange.id}) }}">
+                    <div class="form-group">
+    <label for="transporteur">Transporteur:</label>
+    <select class="form-control" id="transporteur" name="transporteur">
+         {% for transporteur in transporteurs %}
+          <option value="{{ transporteur.id }}" {% if echange.idTransporteur and echange.idTransporteur.getId() == transporteur.id %}selected{% endif %}>{{ transporteur.id }}</option>
+                            {% endfor %}
+    </select>
+</div>
+
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="fa-solid fa-file-pen"></i> Assigner
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form action="{{ path('delete_echange', {'id': echange.id}) }}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet echange?')">
+                        <i class="fa fa-trash"></i> Supprimer
+                    </button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+
+        </tbody>
+    </table>
+
+   
+{% endblock %}

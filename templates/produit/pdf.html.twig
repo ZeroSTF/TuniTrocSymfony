@@ -1,0 +1,30 @@
+<center><h1 style="color:#7571f9">Liste des produits</h1></center>
+<br> <br>
+<table border="1" style="border-color: #7C277D">
+    <thead>
+    <tr style="color:purple">
+         <th scope="col">#</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Catégorie</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Libellé</th>
+                  <!--  <th scope="col">Photo</th> -->
+                    <th scope="col">Ville</th>
+                   
+    </tr>
+    </thead>
+    <tbody>
+    {% for produit in produits %}
+        <tr>
+           <td>{{ produit.id }}</td>
+                    <td>{{ produit.type }}</td>
+                    <td>{{ produit.categorie }}</td>
+                    <td>{{ produit.nom }}</td>
+                    <td>{{ produit.libelle }}</td>
+                   <!-- <td><img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="product photo" style="max-width: 100px"></td>-->
+                  
+                    <td>{{ produit.ville }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

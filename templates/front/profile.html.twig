@@ -1,0 +1,107 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block body %}
+    <link rel="stylesheet" href="{{ asset ('plugins/fontawesome-free/css/all.min.css') }}">
+    <div class="row py-5 px-4">
+    <div class="col-md-12 mx-auto"> <!-- Profile widget -->
+    <div class="bg-white shadow rounded overflow-hidden">
+        <div class="px-4 pt-0 pb-4 cover">
+            <div class="media align-items-end profile-head">
+                <div class="profile mr-3"><img src="{{ asset('uploads/users/' ~ user.photo) }}" alt="..."
+                                               width="130" class="rounded mb-2 img-thumbnail"
+                                               alt="User Photo">
+                    {% if user == app.user %}
+                    <a href="{{ path('app_edit_profile', {'id': app.user.id}) }}" class="btn btn-light btn-sm btn-block">Edit profile</a></div>
+                {% else %}
+                    <a class="btn btn-light btn-sm btn-block" href="{{path('app_reclamer', {'id': user.id})}}">
+                        <i class="fas fa-exclamation-circle"></i> Déposer une réclamation
+                    </a>
+
+                {% endif %}
+                <div class="media-body mb-5 text-white">
+                    <h4 class="mt-0 mb-0">{{ user.prenom }} {{ user.nom }}</h4>
+                    <p class="small mb-4"><i class="fas fa-map-marker-alt mr-2"></i>New York</p></div>
+            </div>
+        </div>
+        <div class="bg-light p-4 d-flex justify-content-end text-center">
+            <ul class="list-inline mb-0">
+                <li class="list-inline-item"><h5 class="font-weight-bold mb-0 d-block">{{ nbProduits }}</h5><small
+                            class="text-muted"> <i class="fas fa-shopping-bag"></i> Produits</small></li>
+                <li class="list-inline-item"><h5
+                            class="font-weight-bold mb-0 d-block">{{ user.valeurFidelite }}</h5><small
+                            class="text-muted"> <i class="fas fa-star"></i> Points de Fidélité</small></li>
+                <li class="list-inline-item">
+                    <h5 class="font-weight-bold mb-0 d-block">{{ user.date|date('Y-m-d H:i:s')|date_modify('3 hours')|date('M d, Y h:i A') }}</h5>
+                    <small class="text-muted"><i class="fas fa-user-clock"></i> Date d'inscription</small>
+                </li>
+            </ul>
+        </div>
+        <div class="px-4 py-3"><h5 class="mb-0">Ville</h5>
+            <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ user.ville }}</p>
+                <div class="container mt-4">
+                    <div id="map" style="width: 200px; height: 200px;"></div>
+                </div>
+
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                <script>
+
+                    // Get the user's city from the PHP variable passed to the Twig template
+                    const city = "{{ user.ville }}";
+                    console.log(`User's city: ${city}`);
+
+                    // Set up the map
+                    const map = L.map('map').setView([34.8534, 10.1078], 8);
+
+                    // Add the tile layer from OpenStreetMap
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: 'Map data &copy; OpenStreetMap contributors',
+                        maxZoom: 18,
+                    }).addTo(map);
+
+                    // Use the Nominatim API from OpenStreetMap to get the latitude and longitude of the user's city
+                    fetch(`https://nominatim.openstreetmap.org/search?q=${city},Tunisia&format=jsonv2`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(`Nominatim API response:`, data);
+
+                            // Get the first result from the API
+                            const result = data[0];
+
+                            // Get the latitude and longitude from the result
+                            const lat = result.lat;
+                            const lon = result.lon;
+                            console.log(`Latitude: ${lat}, Longitude: ${lon}`);
+
+                            // Add a marker for the user's city
+                            const marker = L.marker([lat, lon]).addTo(map);
+
+                            // Center the map on the marker
+                            map.setView(marker.getLatLng(), 6);
+                        });
+
+                </script>
+
+            </div>
+            <div class="px-4 py-3"><h5 class="mb-0">Numéro de Téléphone</h5>
+                <div class="p-4 rounded shadow-sm bg-light"><p class="font-italic mb-0">{{ user.numTel }}</p>
+                </div>
+                <div class="py-4 px-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3"><h5 class="mb-0">Produits</h5>
+                    </div>
+                    <div class="row">
+                        {% for produit in produits %}
+                            <div class="col-lg-6 mb-2 pr-lg-1">
+                                <a href="{{ path('app_produit_show1', {'id': produit.id}) }}">
+                                    <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" alt="{{ produit.nom }}" class="img-fluid rounded shadow-sm">
+                                </a>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

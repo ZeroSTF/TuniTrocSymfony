@@ -1,0 +1,12 @@
+{% extends 'templatefront.html.twig' %}
+
+{% block body %}
+    <h1>Create a new Reclamation</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.cause) }}
+        {{ form_row(form.photo) }}
+        <button type="submit" class="btn btn-primary">Create</button>
+    {{ form_end(form) }}
+{% endblock %}
+

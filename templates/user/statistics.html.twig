@@ -1,0 +1,181 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    <div class="card" style="width: 800px; height: 800px;">
+
+        <div class="card-header">
+            <h3 class="card-title">Inscriptions par date</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="chart3" width="400" height="400"></canvas>
+        </div>
+        <a href="{{ path('app_user_index') }}" class="btn btn-default">Retour à la liste</a>
+    </div>
+
+    <div class="card" style="width: 800px; height: 800px;">
+
+        <div class="card-header">
+            <h3 class="card-title">Utilisateurs par Ville</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="chart" width="400" height="400"></canvas>
+        </div>
+        <a href="{{ path('app_user_index') }}" class="btn btn-default">Retour à la liste</a>
+    </div>
+    <div class="card" style="width: 800px; height: 800px;">
+
+        <div class="card-header">
+            <h3 class="card-title">Utilisateurs par Etat</h3>
+        </div>
+        <div class="card-body">
+            <canvas id="chart2" width="400" height="400"></canvas>
+        </div>
+        <a href="{{ path('app_user_index') }}" class="btn btn-default">Retour à la liste</a>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        var data = {{ data|json_encode()|raw }};
+        var data2 = {{ data2|json_encode()|raw }};
+        var data3 = {{ data3|json_encode()|raw }};
+        console.log(data3);
+
+        // create the first chart for "ville" statistics
+        var chart = new Chart('chart', {
+            type: 'pie',
+            data: {
+                labels: data.map(item => item.label),
+                datasets: [{
+                    data: data.map(item => item.value),
+                    backgroundColor: [
+                        '#0099cc',
+                        '#00cc99',
+                        '#ff6600',
+                        '#66ccff',
+                        '#9900cc',
+                        '#007a5d',
+                    ],
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    labels: {
+                        fontColor: '#FFFFFF'
+                    }
+                }
+            }
+        });
+
+        // create the second chart for "etat" statistics
+        var chart2 = new Chart('chart2', {
+            type: 'bar',
+            data: {
+                labels: data2.map(item => item.label),
+                datasets: [{
+                    label: 'Nombre d\'utilisateurs par état',
+                    data: data2.map(item => item.value),
+                    backgroundColor: [
+                        '#0099cc',
+                        '#00cc99',
+                        '#ff6600',
+                        '#66ccff',
+                        '#9900cc',
+                        '#007a5d',
+                    ],
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    labels: {
+                        fontColor: '#FFFFFF'
+                    }
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Convert the date strings to actual Date objects
+        data3.forEach(item => {
+            item.date = new Date(item.date);
+        });
+
+        // Create a new array that includes all dates in the range
+        var start = data3[0].date;
+        var end = data3[data3.length - 1].date;
+        var allDates = [];
+        while (start <= end) {
+            allDates.push(new Date(start));
+            start.setDate(start.getDate() + 1);
+        }
+
+        // Create a new array that includes the count for each date
+        var countByDate = {};
+        data3.forEach(item => {
+            var dateStr = item.date.toISOString().slice(0, 10);
+            countByDate[dateStr] = item.count;
+        });
+        var counts = allDates.map(date => countByDate[date.toISOString().slice(0, 10)] || 0);
+
+        // Create the chart
+        var ctx = document.getElementById('chart3').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allDates.map(date => date.toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'})),
+                datasets: [{
+                    label: 'Nombre d\'inscriptions par jour',
+                    data: counts,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 2,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Nombre d\'inscriptions par jour',
+                    fontSize: 18,
+                    fontStyle: 'bold',
+                    padding: 20
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'DD MMM'
+                            },
+                            fontSize: 14
+                        },
+                        ticks: {
+                            fontSize: 14
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            fontSize: 14
+                        }
+                    }]
+                },
+            }
+        });
+
+
+    </script>
+{% endblock %}
