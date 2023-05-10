@@ -146,8 +146,8 @@ public function indexF(): Response
         ]);
     }
 
-    #[Route('/new', name: 'add_transporteur')]
 
+    #[Route('/new', name: 'add_transporteur', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $transporteur = new Transporteur();
