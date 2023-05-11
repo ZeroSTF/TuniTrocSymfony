@@ -32,7 +32,6 @@ class UserJSONController extends abstractcontroller
     public function addUser(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $user = new User();
-
         // Set user properties
         $user->setSalt('');
         $user->setPwd(
@@ -117,8 +116,6 @@ class UserJSONController extends abstractcontroller
     public function signupAction(EntityManagerInterface $entityManager, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $user = new User();
-
-        // Set user properties
         $user->setSalt('');
         $user->setPwd(
             $userPasswordHasher->hashPassword(
