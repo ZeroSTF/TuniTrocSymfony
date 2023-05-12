@@ -7,13 +7,20 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Psr\Log\LoggerInterface;
+
 
 class UserJSONController extends abstractcontroller
 {
@@ -113,7 +120,7 @@ class UserJSONController extends abstractcontroller
     }
 
     #[Route('json/signup', name: 'registerJson', methods:['GET', 'POST'])]
-    public function signupAction(EntityManagerInterface $entityManager, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
+    public function signupAction(EntityManagerInterface $entityManager, Request $request, UserPasswordHasherInterface $userPasswordHasher, LoggerInterface $logger): JsonResponse
     {
         $user = new User();
         $user->setSalt('');
@@ -123,7 +130,7 @@ class UserJSONController extends abstractcontroller
                 $request->get('pwd')
             )
         );
-        $user->setPhoto($request->get('photo'));
+        $user->setPhoto("");
         $user->setDate(new \DateTime());
         $user->setEmail($request->get('email'));
         $user->setNom($request->get('nom'));
@@ -132,11 +139,36 @@ class UserJSONController extends abstractcontroller
         $user->setVille($request->get('ville'));
         $user->setValeurFidelite(0);
         $user->setRole(false);
-        $user->setEtat("ACTIVE");
+        $user->setEtat('ACTIVE');
 
         $entityManager->persist($user);
         $entityManager->flush();
-        return new JsonResponse("Compte créé.",200);
+        return new JsonResponse('Compte créé.',200);
+    }
+
+    #[Route('json/signin', name: 'loginJson', methods:['GET', 'POST'])]
+    public function signinAction(Request $request, EntityManagerInterface $entityManager,UserPasswordEncoderInterface $passwordEncoder, AuthenticationUtils $authenticationUtils){
+
+        $email = $request->query->get('email');
+        $password = $request->query->get('password');
+        $user = $entityManager
+            ->getRepository(User::class)
+            ->findOneBy(['email' => $email]);
+        if($user){
+            if(password_verify($password,$user->getPwd())) {
+                $serializer = new Serializer([new ObjectNormalizer()]);
+                $formatted = $serializer->normalize($user);
+                return new JsonResponse($formatted);
+            }
+            else{
+                return new Response('password not found'. $user->getPwd()."####".$passwordEncoder->encodePassword(null, $password));
+            }
+
+        }
+        else{
+            return new Response('user not found');
+
+        }
     }
 
 
