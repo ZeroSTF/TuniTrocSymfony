@@ -6,18 +6,25 @@ use App\Entity\Reclamation;
 use App\Form\ReclamationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
 use App\Entity\User;
 use Knp\Snappy\Pdf;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twilio\Rest\Client;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 use DateTime;
 
@@ -283,7 +290,137 @@ public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
 
         return $this->redirectToRoute('app_produit_index2');
     }
+    //json
+    #[Route('/json/getAll', name: 'app_reclamation_JSON_rec', methods: ['GET'])]
+    public function index_JSON_rec(SerializerInterface $serializer): Response
+    {
+        $reclamations = $this->getDoctrine()->getRepository(Reclamation::class)->findAll();
+        $reclamationsArray = [];
+        foreach ($reclamations as $reclamation) {
+            $reclamationArray = [
+                'id' => $reclamation->getId(),
+                'cause' => $reclamation->getCause(),
+                'etat' => $reclamation->isEtat(),
+                'id_userS' => $reclamation->getIdUsers()->getId(),
+                'id_userR' => $reclamation->getIdUserr()->getId(),
+                'photo' => $reclamation->getPhoto(),
+                'date' => $reclamation->getDate()->format('Y-m-d H:i:s'),
+            ];
+            $reclamationsArray[] = $reclamationArray;
+        }
 
+        $json = $serializer->serialize($reclamationsArray, 'json');
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
+
+    #[Route('/json/new', name: 'create_reclamation_js', methods: ['GET'])]
+    public function createReclamationAction(Request $request,EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
+    {
+        // Decode the JSON data into a PHP array
+        $id_userS = $request->get('idUserr');
+        $id_userR = $request->get('idUsers');
+        $cause = $request->get('cause');
+        $etat = $request->get('etat');
+        $photo = $request->get('photo');
+
+        $userR=$this->getDoctrine()->getRepository(User::class)->find($id_userR);
+        $userS=$this->getDoctrine()->getRepository(User::class)->find($id_userS);
+
+
+        $reclamation = new Reclamation();
+        $reclamation->setIdUsers($userS);
+        $reclamation->setIdUserr($userR);
+        $reclamation->setCause($cause);
+        $reclamation->setEtat(0);
+        $reclamation->setPhoto($photo);
+        $reclamation->setDate(new \DateTime());
+
+
+
+        // Save the entity to the database
+        $entityManager->persist($reclamation);
+        $entityManager->flush();
+
+        // Return a JSON response with the serialized entity data
+        $jsonContent = $serializer->serialize($reclamation, 'json',[
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['idUserr','idUsers'],
+        ]);
+        return new JsonResponse($jsonContent, Response::HTTP_CREATED, [], true);
+    }
+
+
+    #[Route('/json/edit', name: 'edit_reclamation_js', methods: ['GET'])]
+    public function editReclamationAction(Request $request,EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer, $id): JsonResponse
+    {
+// Retrieve the Reclamation entity to be updated
+        $reclamation = $this->getDoctrine()->getRepository(Reclamation::class)->find($request->get('id'));
+        // If the entity is not found, return a 404 response
+        if (!$reclamation) {
+            return new JsonResponse(['error' => 'Reclamation not found'], Response::HTTP_NOT_FOUND);
+        }
+
+// Decode the JSON data into a PHP array
+        $id_userS = $request->get('idUsers');
+        $id_userR = $request->get('idUserr');
+        $cause = $request->get('cause');
+        $photo = $request->get('photo');
+
+        $userR = $this->getDoctrine()->getRepository(User::class)->find($id_userR);
+        $userS = $this->getDoctrine()->getRepository(User::class)->find($id_userS);
+
+// Update the Reclamation entity with the new data
+        $reclamation->setIdUsers($userS);
+        $reclamation->setIdUserr($userR);
+        $reclamation->setCause($cause);
+        $reclamation->setEtat(0);
+        $reclamation->setPhoto($photo);
+
+// Validate the updated entity using the Validator component
+        $errors = $validator->validate($reclamation);
+
+// If there are validation errors, return a JSON response with the errors
+        if (count($errors) > 0) {
+            $errorsArray = [];
+            foreach ($errors as $error) {
+                $errorsArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse($errorsArray, Response::HTTP_BAD_REQUEST);
+        }
+
+// Save the updated entity to the database
+        $entityManager->persist($reclamation);
+        $entityManager->flush();
+
+// Return a JSON response with the serialized entity data
+        $jsonContent = $serializer->serialize($reclamation, 'json', [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['idUserr', 'idUsers'],
+        ]);
+        return new JsonResponse($jsonContent, Response::HTTP_OK, [], true);
+
+    }
+
+    #[Route('/json/delete', name: 'app_reclamation_delete_JSON_a', methods: ['GET'])]
+    public function delete_JSON_jso(Request $request,EntityManagerInterface $entityManager): Response
+    {
+        $id = $request->get("id");
+
+        $reclamation = $this->getDoctrine()->getRepository(Reclamation::class)->find($id);
+
+        if($reclamation != null) {
+
+            $entityManager->remove($reclamation);
+            $entityManager->flush();
+
+            $serializer = new Serializer([new ObjectNormalizer()]);
+            $formatted = $serializer->normalize("reclamation has been deleted successfully.");
+            return new JsonResponse($formatted);
+        }
+
+        $formatted = ["error" => "Invalid reclamation ID."];
+        return new JsonResponse($formatted);
+    }
 
 }
 

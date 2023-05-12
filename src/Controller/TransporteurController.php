@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Produit;
+use App\Entity\Reclamation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,7 +21,11 @@ use App\Entity\Echange;
 use App\Form\EchangeType;
 use App\Repository\EchangeRepository;
 use Endroid\QrCode\QrCode;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TransporteurController extends AbstractController
 {
@@ -340,5 +347,101 @@ class TransporteurController extends AbstractController
         return new Response(
             'transporteur supprimé avec succés ' . json_encode($json)
         );
+    }
+
+    #[Route('/transporteur/json/getAll', name: 'app_transporteur_JSON_rec', methods: ['GET'])]
+    public function index_JSON_rec(SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $transporteurs = $entityManager->getRepository(Transporteur::class)->findAll();
+        $json = $serializer->serialize($transporteurs, 'json');
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
+    #[Route('/transporteur/json/new', name: 'create_transporteur_js', methods: ['GET'])]
+    public function createTransporteurAction(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
+    {
+        // Decode the JSON data into a PHP array
+        $nom = $request->get('nom');
+        $prenom = $request->get('prenom');
+        $numTel = $request->get('numTel');
+
+        $transporteur = new Transporteur();
+        $transporteur->setNom($nom);
+        $transporteur->setPrenom($prenom);
+        $transporteur->setNumTel($numTel);
+        $transporteur->setPhoto("");
+
+
+
+        // Save the entity to the database
+        $entityManager->persist($transporteur);
+        $entityManager->flush();
+
+        // Return a JSON response with the serialized entity data
+        $jsonContent = $serializer->serialize($transporteur, 'json',[
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['id'],
+        ]);
+        return new JsonResponse($jsonContent, Response::HTTP_CREATED, [], true);
+    }
+
+    #[Route('/transporteur/json/edit', name: 'edit_transporteur_js', methods: ['GET'])]
+    public function editTransporteurAction(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
+    {
+        // Decode the JSON data into a PHP array
+        $transporteur = $this->getDoctrine()->getRepository(Transporteur::class)->find($request->get('id'));
+        // If the entity is not found, return a 404 response
+        if (!$transporteur) {
+            return new JsonResponse(['error' => 'TRa not found'], Response::HTTP_NOT_FOUND);
+        }
+        $nom = $request->get('nom');
+        $prenom = $request->get('prenom');
+        $numTel = $request->get('numTel');
+
+
+        // Update the entity with the new data
+        $transporteur->setNom($nom);
+        $transporteur->setPrenom($prenom);
+        $transporteur->setNumTel($numTel);
+
+        // Validate the entity using the Validator component
+        $errors = $validator->validate($transporteur);
+        if (count($errors) > 0) {
+            return new JsonResponse((string) $errors, Response::HTTP_BAD_REQUEST, ['Content-Type' => 'application/json']);
+        }
+
+        // Save the updated entity to the database
+        $entityManager->persist($transporteur);
+        $entityManager->flush();
+
+        // Return a JSON response with the serialized entity data
+        $jsonContent = $serializer->serialize($transporteur, 'json');
+        return new JsonResponse($jsonContent, Response::HTTP_OK, [], true);
+    }
+
+    /*
+      $reclamation = $this->getDoctrine()->getRepository(Reclamation::class)->find($request->get('id'));
+        // If the entity is not found, return a 404 response
+        if (!$reclamation) {
+            return new JsonResponse(['error' => 'Reclamation not found'], Response::HTTP_NOT_FOUND);
+        }
+     */
+
+    #[Route('/transporteur/json/delete', name: 'delete_transporteur_js', methods: ['GET'])]
+    public function deletetransporteurAction(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $produit = $entityManager->getRepository(Transporteur::class)->find($request->get('id'));
+        if($produit != null) {
+
+            $entityManager->remove($produit);
+            $entityManager->flush();
+
+            $serializer = new Serializer([new ObjectNormalizer()]);
+            $formatted = $serializer->normalize("transporteur has been deleted successfully.");
+            return new JsonResponse($formatted);
+        }
+
+        $formatted = ["error" => "Invalid transporteur   ID."];
+        return new JsonResponse($formatted);
     }
 }

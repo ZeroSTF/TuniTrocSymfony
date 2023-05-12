@@ -66,7 +66,7 @@ class UserJSONController extends abstractcontroller
     }
 
 
-    #[Route('json/modifierUser', name: 'modifierUser', methods: ['GET', 'POST'])]
+    #[Route('json/modifUser', name: 'modifierUser', methods: ['GET', 'POST'])]
     public function editUser(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $userId = $request->get('id');
@@ -78,23 +78,10 @@ class UserJSONController extends abstractcontroller
 
         // Update user properties
         $user->setSalt('');
-        $user->setPwd(
-            $userPasswordHasher->hashPassword(
-                $user,
-                $request->get('pwd')
-            )
-        );
-        $user->setPhoto($request->get('photo'));
-        $user->setDate(new \DateTime());
-        $user->setEmail($request->get('email'));
         $user->setNom($request->get('nom'));
         $user->setPrenom($request->get('prenom'));
         $user->setNumTel($request->get('numTel'));
         $user->setVille($request->get('ville'));
-        $user->setValeurFidelite($request->get('valeurFidelite'));
-        $role = $request->get('role');
-        $user->setRole($role === 'Admin');
-        $user->setEtat($request->get('etat'));
 
         $entityManager->flush();
 

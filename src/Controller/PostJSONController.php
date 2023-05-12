@@ -35,7 +35,7 @@ class PostJSONController extends abstractcontroller
             $reclamationArray = [
                 'idPost' => $post->getIdPost(),
                 'description' => $post->getDescription(),
-                'dateP' => $post->getDateP()->format('yyyy-mm-dd'),
+                'dateP' => $post->getDateP(),
                 'idUser' => $post->getIdUser()->getId(),
             ];
             $reclamationsArray[] = $reclamationArray;
@@ -70,7 +70,7 @@ class PostJSONController extends abstractcontroller
     }
 
 
-    #[Route('json/modifierPost', name: 'modifierPost', methods: ['GET', 'POST'])]
+    #[Route('json/modifPost', name: 'modifierPost', methods: ['GET', 'POST'])]
     public function editPost(EntityManagerInterface $entityManager, SerializerInterface $serializer, Request $request, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $userId = $request->get('id');
@@ -82,17 +82,6 @@ class PostJSONController extends abstractcontroller
 
         // Update post properties
         $user->setDescription($request->get('description'));
-        $user->setDateP(new \DateTime());
-        $user->setImage("");
-        $UserP = $entityManager
-            ->getRepository(User::class)
-            ->find($request->get('idUser'));
-        $user->setIdUser($UserP);
-        $categorieP=$entityManager
-            ->getRepository(User::class)
-            ->find(3);
-        $user->setIdCategorie($categorieP);
-
         $entityManager->flush();
 
         $json = $serializer->serialize($user, 'json');
@@ -102,16 +91,20 @@ class PostJSONController extends abstractcontroller
     #[Route('json/suppPost', name: 'suppPost', methods: ['GET', 'POST'])]
     public function deletePost(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $userId = $request->get('id');
-        $user = $entityManager->getRepository(Post::class)->find($userId);
-
-        if (!$user) {
+        $Id = $request->get('id');
+        $post = $entityManager->getRepository(Post::class)->find($Id);
+        if (!$post) {
             return new JsonResponse(['message' => 'Post not found'], Response::HTTP_NOT_FOUND);
         }
 
-        $entityManager->remove($user);
-        $entityManager->flush();
+        try {
+            $entityManager->remove($post);
+            $entityManager->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'An error occurred while deleting the post'], Response::HTTP_OK);
+        }
 
-        return new JsonResponse(['message' => 'Post deleted successfully']);
+
+        return new JsonResponse(['message' => 'Post deleted successfully'], Response::HTTP_OK);
     }
 }

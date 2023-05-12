@@ -3,6 +3,7 @@
 namespace App\Controller;
 use App\Entity\Panier;
 use App\Entity\Produit;
+use App\Entity\User;
 use App\Form\ProduitType;
 use Dompdf\Dompdf;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +22,11 @@ use Symfony\Component\HttpFoundation\File\File;
 use League\Csv\Writer;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 #[Route('/produit')]
@@ -281,6 +286,111 @@ class ProduitController extends AbstractController
 
         }
         return $realEntities;
+    }
+    #[Route('/json/getAll', name: 'app_produit_JSON_rec', methods: ['GET'])]
+    public function index_JSON_rec(SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $produits =  $entityManager->getRepository(Produit::class)->findAll();
+        $json = $serializer->serialize($produits, 'json', [
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['user'],
+        ]);
+
+        return new JsonResponse($json, 200, [], true);
+    }
+
+    #[Route('/json/new', name: 'create_produit_js', methods: ['GET'])]
+    public function createProduitAction(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
+    {
+        $type = $request->get('type');
+        $categorie = $request->get('categorie');
+        $nom = $request->get('nom');
+        $libelle = $request->get('libelle');
+        $prix = $request->get('prix');
+        $stock = $request->get('stock');
+
+        $produit = new Produit();
+        $produit->setType($type);
+        $produit->setCategorie($categorie);
+        $produit->setNom($nom);
+        $produit->setLibelle($libelle);
+        $produit->setVille($prix);
+        $produit->setPhoto(" ");
+        $produit->setIdUser(1);
+        $produit->setUser($entityManager->getRepository(User::class)->find(11));
+        // $produit->setStock($stock);
+
+        $errors = $validator->validate($produit);
+
+        if (count($errors) > 0) {
+            $errorsArray = [];
+            foreach ($errors as $error) {
+                $errorsArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse($errorsArray, Response::HTTP_BAD_REQUEST);
+        }
+
+        $entityManager->persist($produit);
+        $entityManager->flush();
+
+        $jsonContent = $serializer->serialize($produit, 'json');
+        return new JsonResponse($jsonContent, Response::HTTP_CREATED, [], true);
+    }
+
+    #[Route('/json/editj', name: 'edit_produit_js', methods: ['GET'])]
+    public function editProduitAction(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
+    {
+        $produit = $entityManager->getRepository(Produit::class)->find($request->get('id'));
+
+        if (!$produit) {
+            return new JsonResponse(['error' => 'Produit not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $type = $request->get('type');
+        $categorie = $request->get('categorie');
+        $nom = $request->get('nom');
+        $libelle = $request->get('libelle');
+        $prix = $request->get('prix');
+        $stock = $request->get('stock');
+
+        $produit->setType($type);
+        $produit->setCategorie($categorie);
+        $produit->setNom($nom);
+        $produit->setLibelle($libelle);
+        $produit->setVille($prix);
+        //   $produit->setStock($stock);
+
+        $errors = $validator->validate($produit);
+
+        if (count($errors) > 0) {
+            $errorsArray = [];
+            foreach ($errors as $error) {
+                $errorsArray[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return new JsonResponse($errorsArray, Response::HTTP_BAD_REQUEST);
+        }
+
+        $entityManager->flush();
+
+        $jsonContent = $serializer->serialize($produit, 'json');
+        return new JsonResponse($jsonContent, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/json/delete', name: 'delete_produit_js', methods: ['GET'])]
+    public function deleteProduitAction(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $produit = $entityManager->getRepository(Produit::class)->find($request->get('id'));
+        if($produit != null) {
+
+            $entityManager->remove($produit);
+            $entityManager->flush();
+
+            $serializer = new Serializer([new ObjectNormalizer()]);
+            $formatted = $serializer->normalize("produit has been deleted successfully.");
+            return new JsonResponse($formatted);
+        }
+
+        $formatted = ["error" => "Invalid produit ID."];
+        return new JsonResponse($formatted);
     }
 
 
