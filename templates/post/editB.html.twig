@@ -1,0 +1,51 @@
+{% extends 'template.html.twig' %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block body %}
+<div class="card col-md-12">
+    <div class="card-header">
+        <h3 class="card-title">Modifier une publication</h3>
+    </div>
+    <div class="card-body">
+    {{ form_start(form) }}
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="far fa-envelope"></i></span>
+            </div>
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description'}}) }}
+
+        </div>
+        {{ form_errors(form.description, {'attr': {'class': 'invalid-feedback'}}) }}
+    </div>
+    <div class="form-group">
+        <div class="custom-file">
+            {{ form_widget(form.imageFile, {'attr': {'class': 'custom-file-input', 'id': 'customFile'}}) }}
+            <label class="custom-file-label" for="customFile"><i class="fas fa-upload"></i> Choisir une photo...</label>
+        </div>
+        {{ form_errors(form.imageFile, {'attr': {'class': 'invalid-feedback'}}) }}
+    </div>
+
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                </div>
+                {{ form_widget(form.idCategorie, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
+            </div>
+            {{ form_errors(form.idCategorie, {'attr': {'class': 'invalid-feedback'}}) }}
+        </div>
+
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ button_label|default('Modifier') }}
+    </button>
+    {{ form_end(form) }}
+    </div>
+    <div class="card-footer">
+        <a href="{{ path('app_post_indexB') }}" class="btn btn-default">Retour à la liste</a>
+        {{ include('post/_deleteB_form.html.twig') }}
+    </div>
+</div>
+
+
+{% endblock %}

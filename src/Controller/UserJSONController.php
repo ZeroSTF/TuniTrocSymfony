@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +25,12 @@ use Psr\Log\LoggerInterface;
 
 class UserJSONController extends abstractcontroller
 {
+    public EmailVerifier $emailVerifier;
+    public function __construct(EmailVerifier $emailVerifier)
+    {
+        $this->emailVerifier = $emailVerifier;
+    }
+
     #[Route('json/afficherUser', name: 'afficherUser', methods: ['GET', 'POST'])]
     public function indexUser(EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
     {
@@ -56,10 +63,14 @@ class UserJSONController extends abstractcontroller
         $user->setVille($request->get('ville'));
         $user->setValeurFidelite($request->get('valeurFidelite'));
         $user->setRole($request->get('role') === 'Admin');
-        $user->setEtat($request->get('etat'));
-
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $user->setEtat('PENDING');
+        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            (new TemplatedEmail())
+                ->from(new Address('tunitrocPI@gmail.com', 'TuniTroc'))
+                ->to($user->getEmail())
+                ->subject('Please Confirm your Email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
 
         $json = $serializer->serialize($user, 'json');
         return new JsonResponse(json_decode($json));
@@ -128,8 +139,17 @@ class UserJSONController extends abstractcontroller
         $user->setRole(false);
         $user->setEtat('ACTIVE');
 
+
         $entityManager->persist($user);
         $entityManager->flush();
+        $user->setid(1);
+        $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+            (new TemplatedEmail())
+                ->from(new Address('tunitrocPI@gmail.com', 'TuniTroc'))
+                ->to($user->getEmail())
+                ->subject('Please Confirm your Email')
+                ->htmlTemplate('registration/confirmation_email.html.twig')
+        );
         return new JsonResponse('Compte créé.',200);
     }
 

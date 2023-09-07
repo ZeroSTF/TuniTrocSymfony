@@ -315,8 +315,8 @@ class ProduitController extends AbstractController
         $produit->setLibelle($libelle);
         $produit->setVille($prix);
         $produit->setPhoto(" ");
-        $produit->setIdUser(1);
-        $produit->setUser($entityManager->getRepository(User::class)->find(11));
+        $produit->setIdUser(78);
+        $produit->setUser($entityManager->getRepository(User::class)->find(78));
         // $produit->setStock($stock);
 
         $errors = $validator->validate($produit);
@@ -339,6 +339,7 @@ class ProduitController extends AbstractController
     #[Route('/json/editj', name: 'edit_produit_js', methods: ['GET'])]
     public function editProduitAction(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
     {
+        $produit= new Produit();
         $produit = $entityManager->getRepository(Produit::class)->find($request->get('id'));
 
         if (!$produit) {
@@ -357,7 +358,6 @@ class ProduitController extends AbstractController
         $produit->setNom($nom);
         $produit->setLibelle($libelle);
         $produit->setVille($prix);
-        //   $produit->setStock($stock);
 
         $errors = $validator->validate($produit);
 

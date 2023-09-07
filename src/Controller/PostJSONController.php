@@ -55,7 +55,7 @@ class PostJSONController extends abstractcontroller
         $user->setImage("");
         $UserP = $entityManager
             ->getRepository(User::class)
-            ->find($request->get('idUser'));
+            ->find(78);
         $user->setIdUser($UserP);
         $categorieP=$entityManager
             ->getRepository(User::class)

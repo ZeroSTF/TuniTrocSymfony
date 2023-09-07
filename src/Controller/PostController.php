@@ -19,6 +19,18 @@ use Symfony\Component\Security\Core\Security;
 #[Route('/post')]
 class PostController extends AbstractController
 {
+    #[Route('/', name: 'app_post_indexB', methods: ['GET'])]
+    public function indexB(EntityManagerInterface $entityManager): Response
+    {
+        $posts = $entityManager
+            ->getRepository(Post::class)
+            ->findAll();
+
+        return $this->render('post/indexB.html.twig', [
+            'posts' => $posts,
+        ]);
+    }
+
     #[Route('/mespost', name: 'app_post_index', methods: ['GET'])]
     public function index(Request $request,EntityManagerInterface $entityManager, PaginatorInterface $paginator, Security $security): Response
     {
@@ -47,6 +59,7 @@ class PostController extends AbstractController
         ]);
     }
 
+
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -65,6 +78,29 @@ class PostController extends AbstractController
         }
 
         return $this->renderForm('post/new.html.twig', [
+            'post' => $post,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/newB', name: 'app_post_newB', methods: ['GET', 'POST'])]
+    public function newB(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user=$entityManager->getRepository(User::class)->find($this->getUser());
+            $post->setIdUser($user);
+            $post->setDateP(new \DateTime());
+            $entityManager->persist($post);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_post_indexB', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('post/newB.html.twig', [
             'post' => $post,
             'form' => $form,
         ]);
@@ -126,6 +162,27 @@ class PostController extends AbstractController
         ]);
     }
 
+    #[Route('/{idPost}/editB', name: 'app_post_editB', methods: ['GET', 'POST'])]
+    public function editB(Request $request,$idPost,EntityManagerInterface $entityManager): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $post = $em->getRepository(Post::class)->find($idPost);
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_post_indexB', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('post/editB.html.twig', [
+            'post' => $post,
+            'form' => $form,
+        ]);
+    }
+
     #[Route('/delete/{id}', name: 'delete')]
     public function delete(Request $request, EntityManagerInterface $entityManager,$id): Response
     {
@@ -135,6 +192,17 @@ class PostController extends AbstractController
         $em->remove($res);
         $em->flush();
         return $this->redirectToRoute('app_post_indexUser');
+    }
+
+    #[Route('/deleteB/{id}', name: 'deleteB')]
+    public function deleteB(Request $request, EntityManagerInterface $entityManager,$id): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $res = $em->getRepository(Post::class)->find($id);
+
+        $em->remove($res);
+        $em->flush();
+        return $this->redirectToRoute('app_post_indexB');
     }
 
 

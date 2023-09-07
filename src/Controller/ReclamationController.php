@@ -6,6 +6,7 @@ use App\Entity\Reclamation;
 use App\Form\ReclamationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -316,12 +317,12 @@ public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
 
 
     #[Route('/json/new', name: 'create_reclamation_js', methods: ['GET'])]
-    public function createReclamationAction(Request $request,EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer): JsonResponse
+    public function createReclamationAction(Request $request,EntityManagerInterface $entityManager, ValidatorInterface $validator, SerializerInterface $serializer, TranslatorInterface $translator): JsonResponse
     {
         // Decode the JSON data into a PHP array
-        $id_userS = $request->get('idUserr');
+        $id_userS = 78;//$request->get('idUserr');
         $id_userR = $request->get('idUsers');
-        $cause = $request->get('cause');
+        $cause = $this->filterwords($request->get('cause'));
         $etat = $request->get('etat');
         $photo = $request->get('photo');
 
@@ -334,7 +335,12 @@ public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
         $reclamation->setIdUserr($userR);
         $reclamation->setCause($cause);
         $reclamation->setEtat(0);
-        $reclamation->setPhoto($photo);
+        if($photo) {
+            $reclamation->setPhoto($photo);
+        }
+        else{
+            $reclamation->setPhoto("");
+        }
         $reclamation->setDate(new \DateTime());
 
 
@@ -422,6 +428,14 @@ public function pdf(EntityManagerInterface $entityManager, Pdf $pdf): Response
         return new JsonResponse($formatted);
     }
 
+    function filterwords($text){
+        $filterWords = array('fuck', 'pute','bitch');
+        $filterCount = sizeof($filterWords);
+        for ($i = 0; $i < $filterCount; $i++) {
+            $text = preg_replace_callback('/\b' . $filterWords[$i] . '\b/i', function($matches){return str_repeat('*', strlen($matches[0]));}, $text);
+        }
+        return $text;
+    }
 }
 
 

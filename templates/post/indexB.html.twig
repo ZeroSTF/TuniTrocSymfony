@@ -1,0 +1,62 @@
+{% extends 'template.html.twig' %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Description</th>
+                                        <th style="white-space: nowrap;">Date de Publication</th>
+                                        <th>Image</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for post in posts %}
+                                        <tr>
+                                            <td>{{ post.idPost }}</td>
+                                            <td>{{ post.description }}</td>
+                                            <td>{{ post.dateP ? post.dateP|date('Y-m-d') : '' }}</td>
+                                            <td>{% if post.image %}
+                                                    <img src="{{ asset('images/posts/')}}{{ post.image }}" alt="photo"
+                                                         width="100">
+                                                {% else %}
+                                                    No photo
+                                                {% endif %}</td>
+                                            <td class="project-actions text-right" style="white-space: nowrap;">
+                                                <a href="{{ path("app_post_show",{'id': post.idPost}) }}"
+                                                   class="btn btn-sm btn-primary"><i
+                                                            class="fas fa-eye"></i> Voir</a>
+                                                <a href="{{ path('app_post_editB', {'idPost': post.idPost}) }}"
+                                                   class="btn btn-sm btn-warning"><i
+                                                            class="fas fa-edit"></i> Modifier</a>
+                                                {{ include('post/_delete_form.html.twig') }}
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="12">Aucun enregistrement trouvé</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <a href="{{ path('app_post_newB') }}" class="nav-link btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                Créer une nouvelle publication</a>
+                        </div>
+                    </div>
+
+
+    </section>
+
+{% endblock %}
+
+
+
+

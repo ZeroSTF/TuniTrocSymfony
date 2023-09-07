@@ -355,7 +355,7 @@ class TransporteurController extends AbstractController
         $transporteurs = $entityManager->getRepository(Transporteur::class)->findAll();
         $json = $serializer->serialize($transporteurs, 'json');
 
-        return new JsonResponse($json, 200, [], true);
+        return new JsonResponse(json_decode($json));
     }
 
     #[Route('/transporteur/json/new', name: 'create_transporteur_js', methods: ['GET'])]
